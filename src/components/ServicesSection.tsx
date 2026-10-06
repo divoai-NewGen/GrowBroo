@@ -69,20 +69,20 @@ export default function ServicesSection() {
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div className="max-w-2xl">
-            <span className="inline-block px-3.5 py-1 text-xs font-black uppercase tracking-wider text-[#006B21] bg-white border border-[#D8E7D8] rounded-full mb-3">
+            <span className="inline-block px-3.5 py-1 text-xs font-black uppercase tracking-wider text-[#0194A6] bg-white border border-[#DCECEF] rounded-full mb-3">
               OUR EXPERTISE
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#050505] tracking-tight leading-[1.15]">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#003351] tracking-tight leading-[1.15]">
               Everything you need to move forward.
             </h2>
-            <p className="text-base sm:text-lg text-[#4D5C52] mt-4">
+            <p className="text-base sm:text-lg text-[#344054] mt-4">
               End-to-end digital capabilities designed to help high-growth ventures ideate, construct, and scale without friction.
             </p>
           </div>
           <div>
             <Link
               href="/our-services"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border border-[#D8E7D8] text-xs font-bold uppercase tracking-wider text-[#050505] hover:bg-[#006B21] hover:text-white transition-all shadow-xs"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border border-[#DCECEF] text-xs font-bold uppercase tracking-wider text-[#003351] hover:bg-[#0194A6] hover:text-white transition-all shadow-xs"
             >
               <span>Explore All Capabilities</span>
               <ArrowRightIcon size={14} />
@@ -97,39 +97,39 @@ export default function ServicesSection() {
             return (
               <div
                 key={service.id}
-                className="group relative bg-white rounded-3xl p-7 sm:p-8 border border-[#D8E7D8] hover:border-[#006B21]/50 shadow-[0_4px_16px_rgba(0,107,33,0.03)] hover:shadow-[0_16px_32px_rgba(0,107,33,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+                className="group relative bg-white rounded-3xl p-7 sm:p-8 border border-[#DCECEF] hover:border-[#0194A6]/50 shadow-[0_4px_16px_rgba(0,51,81,0.03)] hover:shadow-[0_16px_32px_rgba(1,148,166,0.12)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
               >
                 {/* Top Row: Icon + Number */}
                 <div>
                   <div className="flex items-center justify-between mb-6">
-                    <div className="w-12 h-12 rounded-2xl bg-[#E9F8E9] text-[#006B21] flex items-center justify-center group-hover:bg-[#006B21] group-hover:text-[#39E900] transition-colors duration-300">
+                    <div className="w-12 h-12 rounded-2xl bg-[#E9FAFC] text-[#0194A6] flex items-center justify-center group-hover:bg-[#003351] group-hover:text-[#02DEF1] transition-colors duration-300">
                       <Icon size={24} />
                     </div>
-                    <span className="text-xs font-mono font-bold text-[#4D5C52]/70 group-hover:text-[#006B21] transition-colors">
+                    <span className="text-xs font-mono font-bold text-[#344054]/70 group-hover:text-[#0194A6] transition-colors">
                       0{index + 1}
                     </span>
                   </div>
 
-                  <span className="text-[11px] font-black uppercase tracking-widest text-[#006B21] block mb-1">
+                  <span className="text-[11px] font-black uppercase tracking-widest text-[#0194A6] block mb-1">
                     {service.tagline}
                   </span>
 
-                  <h3 className="text-xl font-bold text-[#050505] tracking-tight mb-3">
+                  <h3 className="text-xl font-bold text-[#003351] tracking-tight mb-3">
                     {service.name}
                   </h3>
 
-                  <p className="text-sm text-[#4D5C52] leading-relaxed mb-6">
+                  <p className="text-sm text-[#344054] leading-relaxed mb-6">
                     {service.desc}
                   </p>
                 </div>
 
                 {/* Highlights list & Link */}
-                <div className="pt-4 border-t border-[#E9F8E9] space-y-3">
+                <div className="pt-4 border-t border-[#DCECEF] space-y-3">
                   <div className="flex flex-wrap gap-1.5">
                     {service.highlights.map((item) => (
                       <span
                         key={item}
-                        className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-[#E9F8E9] text-[#050505] border border-[#D8E7D8]"
+                        className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-[#E9FAFC] text-[#003351] border border-[#DCECEF]"
                       >
                         {item}
                       </span>
@@ -139,7 +139,7 @@ export default function ServicesSection() {
                   <div className="pt-3">
                     <Link
                       href={`/our-services#${service.id}`}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-[#006B21] hover:text-[#10251A] transition-colors"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0194A6] hover:text-[#003351] transition-colors"
                     >
                       <span>Learn more</span>
                       <ArrowUpRightIcon

@@ -22,7 +22,7 @@ export default function TrustSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
         <div className="text-center mb-8">
-          <p className="text-xs uppercase font-black tracking-widest text-[#4D5C52]">
+          <p className="text-xs uppercase font-black tracking-widest text-[#344054]">
             Trusted by ambitious businesses &amp; venture-backed scaleups
           </p>
         </div>
@@ -32,12 +32,12 @@ export default function TrustSection() {
           {clientLogos.map((client) => (
             <div
               key={client.name}
-              className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white border border-[#D8E7D8] hover:border-[#006B21]/40 hover:shadow-xs transition-all duration-200 group"
+              className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white border border-[#DCECEF] hover:border-[#0194A6]/50 hover:shadow-xs transition-all duration-200 group"
             >
-              <span className="text-base font-black text-[#050505] tracking-tight group-hover:text-[#006B21] transition-colors">
+              <span className="text-base font-black text-[#003351] tracking-tight group-hover:text-[#0194A6] transition-colors">
                 {client.name}
               </span>
-              <span className="text-[9px] uppercase tracking-wider font-bold text-[#4D5C52] mt-0.5">
+              <span className="text-[9px] uppercase tracking-wider font-bold text-[#344054] mt-0.5">
                 {client.tag}
               </span>
             </div>
@@ -45,16 +45,16 @@ export default function TrustSection() {
         </div>
 
         {/* Highlight Metrics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 pt-10 border-t border-[#D8E7D8]">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 pt-10 border-t border-[#DCECEF]">
           {stats.map((stat) => (
-            <div key={stat.label} className="text-left pl-2 sm:pl-4 border-l-2 border-[#006B21]">
-              <div className="text-3xl sm:text-4xl font-black text-[#050505] tracking-tight">
+            <div key={stat.label} className="text-left pl-2 sm:pl-4 border-l-2 border-[#0194A6]">
+              <div className="text-3xl sm:text-4xl font-black text-[#003351] tracking-tight">
                 {stat.value}
               </div>
-              <div className="text-sm font-bold text-[#050505] mt-1">
+              <div className="text-sm font-bold text-[#003351] mt-1">
                 {stat.label}
               </div>
-              <div className="text-xs text-[#4D5C52] mt-0.5">
+              <div className="text-xs text-[#344054] mt-0.5">
                 {stat.desc}
               </div>
             </div>

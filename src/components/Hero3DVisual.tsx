@@ -56,7 +56,7 @@ export default function Hero3DVisual({ isLaunching = false }: Hero3DVisualProps)
         />
         <div
           aria-hidden="true"
-          className="absolute top-1/4 right-1/4 w-72 h-72 bg-[#39E900]/15 rounded-full blur-3xl pointer-events-none -z-10"
+          className="absolute top-1/4 right-1/4 w-72 h-72 bg-[#02DEF1]/15 rounded-full blur-3xl pointer-events-none -z-10"
         />
 
         {/* 
@@ -109,9 +109,9 @@ export default function Hero3DVisual({ isLaunching = false }: Hero3DVisualProps)
             onMouseEnter={() => setActiveTooltip("ads")}
             onMouseLeave={() => setActiveTooltip(null)}
           >
-            <div className="w-full h-full rounded-2xl ring-2 ring-transparent group-hover:ring-[#39E900]/50 group-hover:shadow-[0_0_20px_rgba(57,233,0,0.3)] transition-all" />
+            <div className="w-full h-full rounded-2xl ring-2 ring-transparent group-hover:ring-[#02DEF1]/50 group-hover:shadow-[0_0_20px_rgba(2,222,241,0.3)] transition-all" />
             {activeTooltip === "ads" && (
-              <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-[#10251A] text-white text-[11px] font-bold rounded-lg whitespace-nowrap shadow-xl border border-white/20 animate-in fade-in duration-150">
+              <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-[#002F4D] text-white text-[11px] font-bold rounded-lg whitespace-nowrap shadow-xl border border-white/20 animate-in fade-in duration-150">
                 High-ROI Paid Acquisition
               </div>
             )}
@@ -125,9 +125,9 @@ export default function Hero3DVisual({ isLaunching = false }: Hero3DVisualProps)
             onMouseEnter={() => setActiveTooltip("webdev")}
             onMouseLeave={() => setActiveTooltip(null)}
           >
-            <div className="w-full h-full rounded-2xl ring-2 ring-transparent group-hover:ring-[#006B21]/50 group-hover:shadow-[0_0_20px_rgba(0,107,33,0.3)] transition-all" />
+            <div className="w-full h-full rounded-2xl ring-2 ring-transparent group-hover:ring-[#0194A6]/50 group-hover:shadow-[0_0_20px_rgba(1,148,166,0.3)] transition-all" />
             {activeTooltip === "webdev" && (
-              <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-[#10251A] text-white text-[11px] font-bold rounded-lg whitespace-nowrap shadow-xl border border-white/20 animate-in fade-in duration-150">
+              <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-[#002F4D] text-white text-[11px] font-bold rounded-lg whitespace-nowrap shadow-xl border border-white/20 animate-in fade-in duration-150">
                 Modern Next.js Architecture
               </div>
             )}
@@ -141,9 +141,9 @@ export default function Hero3DVisual({ isLaunching = false }: Hero3DVisualProps)
             onMouseEnter={() => setActiveTooltip("ecommerce")}
             onMouseLeave={() => setActiveTooltip(null)}
           >
-            <div className="w-full h-full rounded-2xl ring-2 ring-transparent group-hover:ring-[#006B21]/50 group-hover:shadow-[0_0_20px_rgba(0,107,33,0.3)] transition-all" />
+            <div className="w-full h-full rounded-2xl ring-2 ring-transparent group-hover:ring-[#0194A6]/50 group-hover:shadow-[0_0_20px_rgba(1,148,166,0.3)] transition-all" />
             {activeTooltip === "ecommerce" && (
-              <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-[#10251A] text-white text-[11px] font-bold rounded-lg whitespace-nowrap shadow-xl border border-white/20 animate-in fade-in duration-150">
+              <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-[#002F4D] text-white text-[11px] font-bold rounded-lg whitespace-nowrap shadow-xl border border-white/20 animate-in fade-in duration-150">
                 High-Throughput Storefronts
               </div>
             )}
@@ -157,9 +157,9 @@ export default function Hero3DVisual({ isLaunching = false }: Hero3DVisualProps)
             onMouseEnter={() => setActiveTooltip("growth")}
             onMouseLeave={() => setActiveTooltip(null)}
           >
-            <div className="w-full h-full rounded-2xl ring-2 ring-transparent group-hover:ring-[#39E900]/50 group-hover:shadow-[0_0_20px_rgba(57,233,0,0.3)] transition-all" />
+            <div className="w-full h-full rounded-2xl ring-2 ring-transparent group-hover:ring-[#02DEF1]/50 group-hover:shadow-[0_0_20px_rgba(2,222,241,0.3)] transition-all" />
             {activeTooltip === "growth" && (
-              <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-[#10251A] text-white text-[11px] font-bold rounded-lg whitespace-nowrap shadow-xl border border-white/20 animate-in fade-in duration-150">
+              <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-[#002F4D] text-white text-[11px] font-bold rounded-lg whitespace-nowrap shadow-xl border border-white/20 animate-in fade-in duration-150">
                 +142% Conversion Velocity
               </div>
             )}

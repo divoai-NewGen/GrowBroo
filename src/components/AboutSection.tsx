@@ -27,15 +27,15 @@ export default function AboutSection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left Column: Heading and Story (7 cols) */}
           <div className="lg:col-span-7">
-            <span className="inline-block px-3.5 py-1 text-xs font-black uppercase tracking-wider text-[#006B21] bg-[#E9F8E9] border border-[#D8E7D8] rounded-full mb-4">
+            <span className="inline-block px-3.5 py-1 text-xs font-black uppercase tracking-wider text-[#0194A6] bg-[#E9FAFC] border border-[#DCECEF] rounded-full mb-4">
               ABOUT VERDANT DIGITAL
             </span>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#050505] tracking-tight leading-[1.15] mb-6">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#003351] tracking-tight leading-[1.15] mb-6">
               Turning ideas into meaningful digital experiences.
             </h2>
 
-            <div className="space-y-4 text-base sm:text-lg text-[#4D5C52] leading-relaxed mb-8">
+            <div className="space-y-4 text-base sm:text-lg text-[#344054] leading-relaxed mb-8">
               <p>
                 We are a boutique digital product studio partnering with ambitious founders, startups, and established enterprises. We don&apos;t build cookie-cutter templates—we engineer bespoke digital platforms that accelerate commercial growth.
               </p>
@@ -51,15 +51,15 @@ export default function AboutSection() {
                 return (
                   <div
                     key={v.title}
-                    className="p-4 rounded-2xl bg-white border border-[#D8E7D8] hover:border-[#006B21]/40 transition-colors shadow-xs"
+                    className="p-4 rounded-2xl bg-white border border-[#DCECEF] hover:border-[#0194A6]/50 transition-colors shadow-xs"
                   >
-                    <div className="w-9 h-9 rounded-xl bg-[#E9F8E9] text-[#006B21] flex items-center justify-center mb-3">
+                    <div className="w-9 h-9 rounded-xl bg-[#E9FAFC] text-[#0194A6] flex items-center justify-center mb-3">
                       <Icon size={18} />
                     </div>
-                    <h3 className="text-sm font-bold text-[#050505] mb-1">
+                    <h3 className="text-sm font-bold text-[#003351] mb-1">
                       {v.title}
                     </h3>
-                    <p className="text-xs text-[#4D5C52] leading-relaxed">
+                    <p className="text-xs text-[#344054] leading-relaxed">
                       {v.desc}
                     </p>
                   </div>
@@ -70,29 +70,29 @@ export default function AboutSection() {
             <div>
               <Link
                 href="/about-us"
-                className="inline-flex items-center gap-2 text-sm font-bold text-[#050505] hover:text-[#006B21] group"
+                className="inline-flex items-center gap-2 text-sm font-bold text-[#003351] hover:text-[#0194A6] group"
               >
                 <span>Read our full studio philosophy &amp; team manifesto</span>
-                <span className="w-6 h-6 rounded-full bg-[#E9F8E9] flex items-center justify-center text-[#006B21] group-hover:translate-x-1 transition-transform">
+                <span className="w-6 h-6 rounded-full bg-[#E9FAFC] flex items-center justify-center text-[#0194A6] group-hover:translate-x-1 transition-transform">
                   <ArrowRightIcon size={12} strokeWidth={2.5} />
                 </span>
               </Link>
             </div>
           </div>
 
-          {/* Right Column: Dark Forest Promotional Panel (#10251A) */}
+          {/* Right Column: Dark Navy Promotional Panel (#002F4D) */}
           <div className="lg:col-span-5">
             <div className="relative">
               {/* Outer Card */}
-              <div className="rounded-3xl bg-[#10251A] text-white p-7 sm:p-9 shadow-2xl relative overflow-hidden border border-white/10">
+              <div className="rounded-3xl bg-[#002F4D] text-white p-7 sm:p-9 shadow-2xl relative overflow-hidden border border-white/10">
                 {/* Background soft glow */}
                 <div
                   aria-hidden="true"
-                  className="absolute -bottom-16 -right-16 w-64 h-64 bg-[#39E900]/20 rounded-full blur-3xl pointer-events-none"
+                  className="absolute -bottom-16 -right-16 w-64 h-64 bg-[#02DEF1]/20 rounded-full blur-3xl pointer-events-none"
                 />
 
                 <div className="flex items-center justify-between mb-8">
-                  <span className="px-3 py-1 rounded-full bg-white/10 text-xs font-bold text-[#39E900] tracking-wide">
+                  <span className="px-3 py-1 rounded-full bg-white/10 text-xs font-bold text-[#02DEF1] tracking-wide">
                     OUR CORE PRINCIPLES
                   </span>
                   <span className="text-xs text-white/60">EST. 2021</span>
@@ -100,7 +100,7 @@ export default function AboutSection() {
 
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
-                    <div className="w-8 h-8 rounded-full bg-[#39E900] text-[#050505] flex items-center justify-center shrink-0 font-black text-sm">
+                    <div className="w-8 h-8 rounded-full bg-[#02DEF1] text-[#003351] flex items-center justify-center shrink-0 font-black text-sm">
                       01
                     </div>
                     <div>
@@ -112,7 +112,7 @@ export default function AboutSection() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <div className="w-8 h-8 rounded-full bg-[#E9F8E9] text-[#006B21] flex items-center justify-center shrink-0 font-black text-sm">
+                    <div className="w-8 h-8 rounded-full bg-[#E9FAFC] text-[#0194A6] flex items-center justify-center shrink-0 font-black text-sm">
                       02
                     </div>
                     <div>
@@ -124,7 +124,7 @@ export default function AboutSection() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <div className="w-8 h-8 rounded-full bg-white text-[#050505] flex items-center justify-center shrink-0 font-black text-sm">
+                    <div className="w-8 h-8 rounded-full bg-white text-[#003351] flex items-center justify-center shrink-0 font-black text-sm">
                       03
                     </div>
                     <div>
@@ -139,18 +139,18 @@ export default function AboutSection() {
                 {/* Sub banner */}
                 <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between text-xs">
                   <span className="text-white/80 font-medium">Ready to experience the difference?</span>
-                  <span className="text-[#39E900] font-bold">100% In-House Team</span>
+                  <span className="text-[#02DEF1] font-bold">100% In-House Team</span>
                 </div>
               </div>
 
               {/* Floating accent card */}
-              <div className="hidden sm:flex absolute -bottom-6 -left-6 bg-white border border-[#D8E7D8] rounded-2xl p-4 shadow-xl items-center gap-3 max-w-xs">
-                <div className="w-10 h-10 rounded-xl bg-[#E9F8E9] text-[#006B21] flex items-center justify-center shrink-0">
+              <div className="hidden sm:flex absolute -bottom-6 -left-6 bg-white border border-[#DCECEF] rounded-2xl p-4 shadow-xl items-center gap-3 max-w-xs">
+                <div className="w-10 h-10 rounded-xl bg-[#E9FAFC] text-[#0194A6] flex items-center justify-center shrink-0">
                   <CheckCircleIcon size={20} />
                 </div>
                 <div>
-                  <div className="text-xs font-black text-[#050505]">Sub-second Speed</div>
-                  <div className="text-[11px] text-[#4D5C52]">Zero unnecessary libraries</div>
+                  <div className="text-xs font-black text-[#003351]">Sub-second Speed</div>
+                  <div className="text-[11px] text-[#344054]">Zero unnecessary libraries</div>
                 </div>
               </div>
             </div>

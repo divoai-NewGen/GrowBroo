@@ -39,38 +39,38 @@ export default function Navbar() {
       <header
         className={`sticky top-0 z-[100] w-full transition-all duration-300 ${
           scrolled
-            ? "bg-[#F7FBF7]/95 backdrop-blur-md shadow-sm border-b-2 border-[#006B21] py-4 sm:py-4.5"
-            : "bg-[#F7FBF7] border-b-2 border-transparent py-5 sm:py-6"
+            ? "bg-white/95 backdrop-blur-md shadow-[0_10px_30px_rgba(0,51,81,0.06)] border-b border-[#DCECEF] py-2.5 sm:py-3"
+            : "bg-white border-b border-transparent py-3 sm:py-4"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative flex items-center justify-between">
-            {/* Brand Logo - Original Pure Black text, Deep Growth Green icon & dot */}
+            {/* Brand Logo - Navy text, Cyan accent */}
             <Link
               href="/"
-              className="flex items-center gap-2.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#006B21] rounded-lg z-10"
+              className="flex items-center gap-2.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0194A6] rounded-lg z-10"
             >
-              <div className="w-10 h-10 rounded-2xl bg-[#006B21] flex items-center justify-center text-[#39E900] shadow-sm transition-transform duration-200 group-hover:scale-105">
+              <div className="w-10 h-10 rounded-2xl bg-[#003351] flex items-center justify-center text-[#02DEF1] shadow-sm transition-transform duration-200 group-hover:scale-105">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M12 2L3 8V16L12 22L21 16V8L12 2Z"
-                    stroke="#39E900"
+                    stroke="#02DEF1"
                     strokeWidth="2.2"
                     strokeLinejoin="round"
                   />
                   <path
                     d="M12 6L7 9.5V14.5L12 18L17 14.5V9.5L12 6Z"
-                    fill="#39E900"
+                    fill="#02DEF1"
                     fillOpacity="0.3"
                   />
-                  <circle cx="12" cy="12" r="2.5" fill="#39E900" />
+                  <circle cx="12" cy="12" r="2.5" fill="#02DEF1" />
                 </svg>
               </div>
               <div className="flex flex-col">
-                <span className="text-xl font-black tracking-tight text-[#050505] leading-tight">
-                  Verdant<span className="text-[#006B21]">.</span>
+                <span className="text-xl font-black tracking-tight text-[#003351] leading-tight">
+                  Verdant<span className="text-[#0194A6]">.</span>
                 </span>
-                <span className="text-[10px] uppercase tracking-widest font-bold text-[#4D5C52] -mt-0.5">
+                <span className="text-[10px] uppercase tracking-widest font-bold text-[#344054] -mt-0.5">
                   Digital Agency
                 </span>
               </div>
@@ -90,7 +90,7 @@ export default function Navbar() {
                       key={link.label}
                       type="button"
                       onClick={() => setIsModalOpen(true)}
-                      className="text-xs lg:text-[13px] font-bold tracking-widest text-[#006B21] hover:text-[#050505] transition-colors uppercase py-1"
+                      className="text-xs lg:text-[13px] font-bold tracking-widest text-[#0194A6] hover:text-[#003351] transition-colors uppercase py-1 cursor-pointer"
                     >
                       {link.label}
                     </button>
@@ -103,8 +103,8 @@ export default function Navbar() {
                     href={link.href}
                     className={`text-xs lg:text-[13px] font-bold tracking-widest transition-colors uppercase py-1 ${
                       isActive
-                        ? "text-[#006B21] font-black"
-                        : "text-[#4D5C52] hover:text-[#006B21]"
+                        ? "text-[#0194A6] font-black"
+                        : "text-[#344054] hover:text-[#0194A6]"
                     }`}
                   >
                     {link.label}
@@ -120,7 +120,7 @@ export default function Navbar() {
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
                 aria-expanded={mobileMenuOpen}
-                className="p-2.5 rounded-xl bg-white border border-[#D8E7D8] text-[#050505] hover:bg-[#E9F8E9] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#006B21]"
+                className="p-2.5 rounded-xl bg-white border border-[#DCECEF] text-[#003351] hover:bg-[#E9FAFC] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0194A6]"
               >
                 {mobileMenuOpen ? <CloseIcon size={20} /> : <MenuIcon size={20} />}
               </button>
@@ -130,7 +130,7 @@ export default function Navbar() {
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-b border-[#D8E7D8] bg-[#F7FBF7] px-4 pt-4 pb-6 mt-3 space-y-2 shadow-lg animate-in slide-in-from-top-2 duration-200">
+          <div className="md:hidden border-b border-[#DCECEF] bg-white px-4 pt-4 pb-6 mt-3 space-y-2 shadow-lg animate-in slide-in-from-top-2 duration-200">
             <nav className="flex flex-col space-y-1">
               {navLinks.map((link) => {
                 const isActive = pathname === link.href;
@@ -144,7 +144,7 @@ export default function Navbar() {
                         setMobileMenuOpen(false);
                         setIsModalOpen(true);
                       }}
-                      className="text-left px-4 py-3 rounded-xl text-sm font-black text-[#006B21] hover:bg-[#E9F8E9] transition-colors"
+                      className="text-left px-4 py-3 rounded-xl text-sm font-black text-[#0194A6] hover:bg-[#E9FAFC] transition-colors cursor-pointer"
                     >
                       {link.label}
                     </button>
@@ -158,8 +158,8 @@ export default function Navbar() {
                     onClick={() => setMobileMenuOpen(false)}
                     className={`px-4 py-3 rounded-xl text-sm font-bold tracking-wider transition-colors ${
                       isActive
-                        ? "text-[#006B21] font-black bg-[#E9F8E9]"
-                        : "text-[#050505] hover:bg-[#E9F8E9]"
+                        ? "text-[#0194A6] font-black bg-[#E9FAFC]"
+                        : "text-[#003351] hover:bg-[#E9FAFC]"
                     }`}
                   >
                     {link.label}

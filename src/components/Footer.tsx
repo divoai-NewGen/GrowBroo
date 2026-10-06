@@ -19,25 +19,25 @@ const serviceLinks = [
 
 export default function Footer() {
   return (
-    <footer className="bg-[#10251A] text-white pt-16 pb-12 border-t border-white/10">
+    <footer className="bg-[#002F4D] text-white pt-16 pb-12 border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-12 border-b border-white/10">
           {/* Brand Info (4 cols) */}
           <div className="lg:col-span-4 space-y-4">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-2xl bg-[#006B21] text-[#39E900] flex items-center justify-center font-black">
+              <div className="w-9 h-9 rounded-2xl bg-[#003351] text-[#02DEF1] flex items-center justify-center font-black">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M12 2L3 8V16L12 22L21 16V8L12 2Z"
-                    stroke="#39E900"
+                    stroke="#02DEF1"
                     strokeWidth="2.5"
                     strokeLinejoin="round"
                   />
-                  <circle cx="12" cy="12" r="3" fill="#39E900" />
+                  <circle cx="12" cy="12" r="3" fill="#02DEF1" />
                 </svg>
               </div>
               <span className="text-xl font-bold tracking-tight text-white">
-                Verdant<span className="text-[#39E900]">.</span>
+                Verdant<span className="text-[#02DEF1]">.</span>
               </span>
             </Link>
 
@@ -46,8 +46,8 @@ export default function Footer() {
             </p>
 
             <div className="flex items-center gap-3 pt-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-xs font-medium text-[#39E900]">
-                <span className="w-2 h-2 rounded-full bg-[#39E900] animate-pulse" />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-xs font-medium text-[#02DEF1]">
+                <span className="w-2 h-2 rounded-full bg-[#02DEF1] animate-pulse" />
                 Available for Q4 &amp; 2027 Sprints
               </span>
             </div>
@@ -55,7 +55,7 @@ export default function Footer() {
 
           {/* Navigation Links (2 cols) */}
           <div className="lg:col-span-2 space-y-3">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#39E900]">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[#02DEF1]">
               Navigation
             </h3>
             <ul className="space-y-2">
@@ -63,7 +63,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-sm text-white/70 hover:text-[#39E900] transition-colors"
+                    className="text-sm text-white/70 hover:text-[#02DEF1] transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -74,7 +74,7 @@ export default function Footer() {
 
           {/* Capabilities Links (3 cols) */}
           <div className="lg:col-span-3 space-y-3">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#39E900]">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[#02DEF1]">
               Capabilities
             </h3>
             <ul className="space-y-2">
@@ -82,7 +82,7 @@ export default function Footer() {
                 <li key={service.label}>
                   <Link
                     href={service.href}
-                    className="text-sm text-white/70 hover:text-[#39E900] transition-colors"
+                    className="text-sm text-white/70 hover:text-[#02DEF1] transition-colors"
                   >
                     {service.label}
                   </Link>
@@ -93,7 +93,7 @@ export default function Footer() {
 
           {/* Contact & Location (3 cols) */}
           <div className="lg:col-span-3 space-y-3">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#39E900]">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[#02DEF1]">
               Direct Contact
             </h3>
             <div className="space-y-2 text-sm text-white/70">
@@ -103,7 +103,7 @@ export default function Footer() {
                 </span>
                 <a
                   href="mailto:hello@verdantdigital.com"
-                  className="font-medium text-white hover:text-[#39E900] transition-colors"
+                  className="font-medium text-white hover:text-[#02DEF1] transition-colors"
                 >
                   hello@verdantdigital.com
                 </a>
@@ -114,7 +114,7 @@ export default function Footer() {
                 </span>
                 <a
                   href="tel:+15553928821"
-                  className="font-medium text-white hover:text-[#39E900] transition-colors"
+                  className="font-medium text-white hover:text-[#02DEF1] transition-colors"
                 >
                   +1 (555) 392-8821
                 </a>
