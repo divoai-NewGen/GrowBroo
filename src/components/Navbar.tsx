@@ -9,7 +9,6 @@ import ContactModal from "./ContactModal";
 interface NavItem {
   label: string;
   href: string;
-  isAction?: boolean;
 }
 
 const navLinks: NavItem[] = [
@@ -17,7 +16,6 @@ const navLinks: NavItem[] = [
   { label: "ABOUT US", href: "/about-us" },
   { label: "OUR SERVICES", href: "/our-services" },
   { label: "PROJECTS", href: "/projects" },
-  { label: "GET IN TOUCH", href: "#contact", isAction: true },
 ];
 
 export default function Navbar() {
@@ -25,6 +23,10 @@ export default function Navbar() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,7 +47,7 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative flex items-center justify-between">
-            {/* Brand Logo - Original Pure Black text, Deep Growth Green icon & dot */}
+            {/* Brand Logo */}
             <Link
               href="/"
               className="flex items-center gap-2.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#006B21] rounded-lg z-10"
@@ -76,27 +78,10 @@ export default function Navbar() {
               </div>
             </Link>
 
-            {/* 
-              Desktop Navigation Links - Perfectly centered, NO badge container
-              Pure text links with clean typography
-            */}
+            {/* Desktop Navigation Links - Centered */}
             <nav className="hidden md:flex items-center space-x-6 lg:space-x-8 absolute left-1/2 -translate-x-1/2">
               {navLinks.map((link) => {
                 const isActive = pathname === link.href;
-
-                if (link.isAction) {
-                  return (
-                    <button
-                      key={link.label}
-                      type="button"
-                      onClick={() => setIsModalOpen(true)}
-                      className="text-xs lg:text-[13px] font-bold tracking-widest text-[#006B21] hover:text-[#050505] transition-colors uppercase py-1 cursor-pointer"
-                    >
-                      {link.label}
-                    </button>
-                  );
-                }
-
                 return (
                   <Link
                     key={link.label}
@@ -112,6 +97,21 @@ export default function Navbar() {
                 );
               })}
             </nav>
+
+            {/* Right Side: CONTACT US Green Badge Button (Desktop) */}
+            <div className="hidden md:flex items-center z-10">
+              <Link
+                href="/contact-us"
+                className={`inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full text-xs font-black tracking-widest uppercase transition-all duration-300 shadow-sm hover:shadow-md hover:scale-[1.03] active:scale-95 ${
+                  pathname === "/contact-us"
+                    ? "bg-[#006B21] text-[#39E900] ring-2 ring-[#39E900] shadow-md"
+                    : "bg-[#006B21] text-white hover:bg-[#10251A] border border-[#39E900]/40"
+                }`}
+              >
+                <span className="w-2 h-2 rounded-full bg-[#39E900] animate-pulse" />
+                <span>CONTACT US</span>
+              </Link>
+            </div>
 
             {/* Mobile Hamburger Button */}
             <div className="flex md:hidden items-center z-10">
@@ -130,27 +130,10 @@ export default function Navbar() {
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-b border-[#D8E7D8] bg-[#F7FBF7] px-4 pt-4 pb-6 mt-3 space-y-2 shadow-lg animate-in slide-in-from-top-2 duration-200">
+          <div className="md:hidden border-b border-[#D8E7D8] bg-[#F7FBF7] px-4 pt-4 pb-6 mt-3 space-y-3 shadow-lg animate-in slide-in-from-top-2 duration-200">
             <nav className="flex flex-col space-y-1">
               {navLinks.map((link) => {
                 const isActive = pathname === link.href;
-
-                if (link.isAction) {
-                  return (
-                    <button
-                      key={link.label}
-                      type="button"
-                      onClick={() => {
-                        setMobileMenuOpen(false);
-                        setIsModalOpen(true);
-                      }}
-                      className="text-left px-4 py-3 rounded-xl text-sm font-black text-[#006B21] hover:bg-[#E9F8E9] transition-colors cursor-pointer"
-                    >
-                      {link.label}
-                    </button>
-                  );
-                }
-
                 return (
                   <Link
                     key={link.label}
@@ -167,11 +150,27 @@ export default function Navbar() {
                 );
               })}
             </nav>
+
+            {/* Mobile Contact Us Green Badge */}
+            <div className="pt-2 border-t border-[#D8E7D8]">
+              <Link
+                href="/contact-us"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center justify-center gap-2.5 w-full py-3.5 rounded-2xl text-xs font-black tracking-widest uppercase shadow-md active:scale-95 transition-all ${
+                  pathname === "/contact-us"
+                    ? "bg-[#006B21] text-[#39E900] ring-2 ring-[#39E900]"
+                    : "bg-[#006B21] text-white hover:bg-[#10251A]"
+                }`}
+              >
+                <span className="w-2 h-2 rounded-full bg-[#39E900] animate-pulse" />
+                <span>CONTACT US</span>
+              </Link>
+            </div>
           </div>
         )}
       </header>
 
-      {/* Global Contact Modal */}
+      {/* Global Contact Modal (Kept for quick CTA triggers across app if needed) */}
       <ContactModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>
   );

@@ -1,5 +1,29 @@
 [
   {
+    "id": "log_1791358430792",
+    "enquiryId": "enq_1791356573634_aqa6",
+    "recipient": "shahbaz126ahmed@gmail.com",
+    "subject": "Re: GrowBroo Digital Proposal - UI/UX Design",
+    "status": "sent",
+    "sentAt": "2026-10-07T07:33:50.792Z"
+  },
+  {
+    "id": "log_1791357837164",
+    "enquiryId": "enq_1791357833467_0o3o",
+    "recipient": "growbroo.info@gmail.com",
+    "subject": "🚀 New Lead: moin (Web Development - $10k - $25k)",
+    "status": "sent",
+    "sentAt": "2026-10-07T07:23:57.164Z"
+  },
+  {
+    "id": "log_1791356573647",
+    "enquiryId": "enq_1791356573634_aqa6",
+    "recipient": "growbroo.info@gmail.com",
+    "subject": "🚀 New Lead: Shahbaz Ahmed (UI/UX Design - $10k - $25k)",
+    "status": "logged",
+    "sentAt": "2026-10-07T07:02:53.647Z"
+  },
+  {
     "id": "log_1791351212701",
     "enquiryId": "enq_1791351212689_qxjx",
     "recipient": "aman@growbroo.com",

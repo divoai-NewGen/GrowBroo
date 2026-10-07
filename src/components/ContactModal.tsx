@@ -17,6 +17,7 @@ export default function ContactModal({ isOpen, onClose, defaultService = "Web De
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -37,8 +38,6 @@ export default function ContactModal({ isOpen, onClose, defaultService = "Web De
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
-
-  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

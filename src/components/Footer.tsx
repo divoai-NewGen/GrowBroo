@@ -1,11 +1,15 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about-us" },
   { label: "Our Services", href: "/our-services" },
   { label: "Projects", href: "/projects" },
+  { label: "Contact Us", href: "/contact-us" },
 ];
 
 const serviceLinks = [
@@ -18,6 +22,12 @@ const serviceLinks = [
 ];
 
 export default function Footer() {
+  const pathname = usePathname();
+
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
+
   return (
     <footer className="bg-[#10251A] text-white pt-16 pb-12 border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

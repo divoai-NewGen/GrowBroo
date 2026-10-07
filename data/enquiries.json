@@ -1,17 +1,5 @@
 [
   {
-    "id": "enq_1791351212689_qxjx",
-    "name": "Rahul Sharma",
-    "email": "rahul@technovate.in",
-    "company": "Technovate Retail",
-    "service": "Digital Ads & Growth",
-    "budget": " - ",
-    "message": "We want to scale our offline retail chain to pan-India via Google & Meta Ads.",
-    "status": "New",
-    "createdAt": "2026-10-07T05:33:32.689Z",
-    "emailSent": false
-  },
-  {
     "id": "enq_1738831001",
     "name": "Sarah Jenkins",
     "email": "sarah.jenkins@acmehealth.io",
@@ -22,6 +10,42 @@
     "status": "New",
     "createdAt": "2026-10-07T08:30:00.000Z",
     "emailSent": true
+  },
+  {
+    "id": "enq_1791357833467_0o3o",
+    "name": "moin",
+    "email": "moin@gmail.com",
+    "company": "Delta5",
+    "service": "Web Development",
+    "budget": "$10k - $25k",
+    "message": "fdhdhdhgh",
+    "status": "New",
+    "createdAt": "2026-10-07T07:23:53.467Z",
+    "emailSent": false
+  },
+  {
+    "id": "enq_1791356573634_aqa6",
+    "name": "Shahbaz Ahmed",
+    "email": "shahbaz126ahmed@gmail.com",
+    "company": "KL University",
+    "service": "UI/UX Design",
+    "budget": "$10k - $25k",
+    "message": "dgdfgdffdhdfh",
+    "status": "Contacted",
+    "createdAt": "2026-10-07T07:02:53.634Z",
+    "emailSent": false
+  },
+  {
+    "id": "enq_1791351212689_qxjx",
+    "name": "Rahul Sharma",
+    "email": "rahul@technovate.in",
+    "company": "Technovate Retail",
+    "service": "Digital Ads & Growth",
+    "budget": " - ",
+    "message": "We want to scale our offline retail chain to pan-India via Google & Meta Ads.",
+    "status": "New",
+    "createdAt": "2026-10-07T05:33:32.689Z",
+    "emailSent": false
   },
   {
     "id": "enq_1738831002",
