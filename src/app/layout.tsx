@@ -59,7 +59,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#003351",
+  themeColor: "#006B21",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -72,7 +72,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${jakarta.variable} scroll-smooth`} data-scroll-behavior="smooth">
-      <body className="min-h-screen flex flex-col bg-white text-[#003351] selection:bg-[#02DEF1] selection:text-[#003351] antialiased">
+      <body className="min-h-screen flex flex-col bg-white text-[#050505] selection:bg-[#39E900] selection:text-[#050505] antialiased">
         <SmoothScrollProvider>
           <Navbar />
           <main className="flex-1">{children}</main>

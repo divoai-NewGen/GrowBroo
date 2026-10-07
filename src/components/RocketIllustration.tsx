@@ -109,16 +109,16 @@ export default function RocketIllustration({
       <svg
         viewBox="0 0 380 430"
         fill="none"
-        className="w-full h-auto max-w-[460px] sm:max-w-[520px] lg:max-w-[580px] drop-shadow-[0_30px_60px_rgba(1,148,166,0.25)] overflow-visible"
+        className="w-full h-auto max-w-[460px] sm:max-w-[520px] lg:max-w-[580px] drop-shadow-[0_30px_60px_rgba(0,107,33,0.22)] overflow-visible"
       >
         <defs>
           {/* Fuselage 3D Cylindrical Shader */}
           <linearGradient id="fuselageBody" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#DCECEF" />
+            <stop offset="0%" stopColor="#DCE8DC" />
             <stop offset="18%" stopColor="#FFFFFF" />
-            <stop offset="55%" stopColor="#F5F8F9" />
-            <stop offset="85%" stopColor="#E9FAFC" />
-            <stop offset="100%" stopColor="#B8DEE5" />
+            <stop offset="55%" stopColor="#F7FBF7" />
+            <stop offset="85%" stopColor="#E2EFE2" />
+            <stop offset="100%" stopColor="#B8D4B8" />
           </linearGradient>
 
           {/* Fuselage Specular Gloss Streak */}
@@ -129,71 +129,71 @@ export default function RocketIllustration({
             <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
           </linearGradient>
 
-          {/* Nosecone Gradient in GrowBroo Navy & Cyan */}
+          {/* Nosecone Gradient in Deep Growth Green */}
           <linearGradient id="noseConeGrad" x1="0.2" y1="0" x2="0.8" y2="1">
-            <stop offset="0%" stopColor="#0194A6" />
-            <stop offset="35%" stopColor="#003351" />
-            <stop offset="80%" stopColor="#012F51" />
-            <stop offset="100%" stopColor="#002F4D" />
+            <stop offset="0%" stopColor="#008C2B" />
+            <stop offset="35%" stopColor="#006B21" />
+            <stop offset="80%" stopColor="#004D18" />
+            <stop offset="100%" stopColor="#10251A" />
           </linearGradient>
 
-          {/* Bright Cyan Tip Glow */}
+          {/* Neon Tip Glow */}
           <linearGradient id="neonTipGrad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#FFFFFF" />
-            <stop offset="40%" stopColor="#02DEF1" />
-            <stop offset="100%" stopColor="#0194A6" />
+            <stop offset="40%" stopColor="#39E900" />
+            <stop offset="100%" stopColor="#006B21" />
           </linearGradient>
 
           {/* Expanded Left Delta Wing Shader */}
           <linearGradient id="leftWingGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#0194A6" />
-            <stop offset="40%" stopColor="#017F8F" />
-            <stop offset="75%" stopColor="#003351" />
-            <stop offset="100%" stopColor="#002F4D" />
+            <stop offset="0%" stopColor="#009A30" />
+            <stop offset="40%" stopColor="#007E27" />
+            <stop offset="75%" stopColor="#00601E" />
+            <stop offset="100%" stopColor="#0C2015" />
           </linearGradient>
 
           {/* Expanded Right Delta Wing Shader */}
           <linearGradient id="rightWingGrad" x1="1" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#017F8F" />
-            <stop offset="45%" stopColor="#003351" />
-            <stop offset="80%" stopColor="#012F51" />
-            <stop offset="100%" stopColor="#002F4D" />
+            <stop offset="0%" stopColor="#007A26" />
+            <stop offset="45%" stopColor="#005A1C" />
+            <stop offset="80%" stopColor="#004315" />
+            <stop offset="100%" stopColor="#0A1810" />
           </linearGradient>
 
           {/* Center Stabilizer Fin Shader */}
           <linearGradient id="centerFinGrad" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#0194A6" />
-            <stop offset="50%" stopColor="#003351" />
-            <stop offset="100%" stopColor="#012F51" />
+            <stop offset="0%" stopColor="#008C2B" />
+            <stop offset="50%" stopColor="#006B21" />
+            <stop offset="100%" stopColor="#004315" />
           </linearGradient>
 
           {/* Cockpit Porthole Bezel */}
           <linearGradient id="bezelGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#DCECEF" />
+            <stop offset="0%" stopColor="#D8E7D8" />
             <stop offset="40%" stopColor="#FFFFFF" />
-            <stop offset="100%" stopColor="#7E9FA8" />
+            <stop offset="100%" stopColor="#7E9F7E" />
           </linearGradient>
 
           {/* Cockpit Glass Reflex */}
           <linearGradient id="glassReflex" x1="0.1" y1="0.1" x2="0.9" y2="0.9">
-            <stop offset="0%" stopColor="#02DEF1" stopOpacity="0.9" />
-            <stop offset="35%" stopColor="#0194A6" />
-            <stop offset="75%" stopColor="#003351" />
-            <stop offset="100%" stopColor="#002F4D" />
+            <stop offset="0%" stopColor="#39E900" stopOpacity="0.9" />
+            <stop offset="35%" stopColor="#006B21" />
+            <stop offset="75%" stopColor="#10251A" />
+            <stop offset="100%" stopColor="#050505" />
           </linearGradient>
 
           {/* Engine Nozzle Gradient */}
           <linearGradient id="nozzleGrad" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#253538" />
-            <stop offset="30%" stopColor="#4A5C61" />
-            <stop offset="65%" stopColor="#1B282B" />
-            <stop offset="100%" stopColor="#002F4D" />
+            <stop offset="0%" stopColor="#25382D" />
+            <stop offset="30%" stopColor="#4A6153" />
+            <stop offset="65%" stopColor="#1B2B22" />
+            <stop offset="100%" stopColor="#10251A" />
           </linearGradient>
 
-          {/* Ambient cyan space glow */}
+          {/* Ambient space glow */}
           <radialGradient id="wingAura" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#02DEF1" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="#0194A6" stopOpacity="0" />
+            <stop offset="0%" stopColor="#39E900" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="#39E900" stopOpacity="0" />
           </radialGradient>
         </defs>
 
@@ -203,15 +203,15 @@ export default function RocketIllustration({
 
         {/* Decorative launch orbit particles around rocket */}
         <g opacity="0.65">
-          <circle cx="48" cy="180" r="2.5" fill="#02DEF1" />
-          <circle cx="70" cy="120" r="1.8" fill="#0194A6" />
-          <circle cx="332" cy="190" r="2.5" fill="#02DEF1" />
-          <circle cx="310" cy="130" r="1.8" fill="#0194A6" />
+          <circle cx="48" cy="180" r="2.5" fill="#39E900" />
+          <circle cx="70" cy="120" r="1.8" fill="#006B21" />
+          <circle cx="332" cy="190" r="2.5" fill="#39E900" />
+          <circle cx="310" cy="130" r="1.8" fill="#006B21" />
           <circle cx="56" cy="270" r="2" fill="#FFA200" />
           <circle cx="324" cy="270" r="2" fill="#FFA200" />
           {/* Subtle Speed Streaks */}
-          <line x1="38" y1="210" x2="38" y2="245" stroke="#DCECEF" strokeWidth="1.5" strokeDasharray="2 3" opacity="0.6" />
-          <line x1="342" y1="210" x2="342" y2="245" stroke="#DCECEF" strokeWidth="1.5" strokeDasharray="2 3" opacity="0.6" />
+          <line x1="38" y1="210" x2="38" y2="245" stroke="#D8E7D8" strokeWidth="1.5" strokeDasharray="2 3" opacity="0.6" />
+          <line x1="342" y1="210" x2="342" y2="245" stroke="#D8E7D8" strokeWidth="1.5" strokeDasharray="2 3" opacity="0.6" />
         </g>
 
         {/* ======================================================== */}
@@ -221,22 +221,22 @@ export default function RocketIllustration({
           d="M130 215 L20 326 C12 336 20 350 34 348 L134 338 L132 250 Z"
           fill="url(#leftWingGrad)"
         />
-        {/* Left Wing Bright Cyan Leading-Edge Bevel Highlight */}
+        {/* Left Wing Neon Lime Leading-Edge Bevel Highlight */}
         <path
           d="M20 326 L130 215 L127 220 L23 328 Z"
-          fill="#02DEF1"
+          fill="#39E900"
           opacity="0.9"
         />
         {/* Left Wing Surface Inset Detail Line */}
         <path
           d="M50 330 L126 250"
-          stroke="#02DEF1"
+          stroke="#39E900"
           strokeWidth="1.8"
           strokeOpacity="0.4"
           strokeLinecap="round"
         />
         {/* Left Wingtip Beacon / Navigation Light */}
-        <circle cx="21" cy="336" r="3.5" fill="#02DEF1" />
+        <circle cx="21" cy="336" r="3.5" fill="#39E900" />
         <circle cx="21" cy="336" r="1.5" fill="#FFFFFF" />
 
         {/* ======================================================== */}
@@ -249,19 +249,19 @@ export default function RocketIllustration({
         {/* Right Wing Shadow & Edge Bevel */}
         <path
           d="M360 326 L346 348 L246 338 L248 332 Z"
-          fill="#002F4D"
+          fill="#0A1810"
           opacity="0.45"
         />
         {/* Right Wing Surface Inset Detail Line */}
         <path
           d="M330 330 L254 250"
-          stroke="#0194A6"
+          stroke="#006B21"
           strokeWidth="1.8"
           strokeOpacity="0.4"
           strokeLinecap="round"
         />
         {/* Right Wingtip Beacon / Navigation Light */}
-        <circle cx="359" cy="336" r="3.5" fill="#02DEF1" />
+        <circle cx="359" cy="336" r="3.5" fill="#39E900" />
         <circle cx="359" cy="336" r="1.5" fill="#FFFFFF" />
 
         {/* ======================================================== */}
@@ -303,7 +303,7 @@ export default function RocketIllustration({
           opacity="0.38"
         />
 
-        {/* 7. Bright Cyan Cone Tip */}
+        {/* 7. Neon Cone Tip */}
         <path
           d="M184 28 C184 28 190 14 190 14 C190 14 196 28 196 28 C193 30 187 30 184 28 Z"
           fill="url(#neonTipGrad)"
@@ -311,15 +311,15 @@ export default function RocketIllustration({
         <circle cx="190" cy="14" r="3.5" fill="#FFFFFF" />
 
         {/* ======================================================== */}
-        {/* 8. NAVY & CYAN RACING STRIPES */}
+        {/* 8. EMERALD & NEON RACING STRIPES */}
         {/* ======================================================== */}
         <path
           d="M124 280 L256 280 L256 290 L124 290 Z"
-          fill="#003351"
+          fill="#006B21"
         />
         <path
           d="M124 295 L256 295 L256 300 L124 300 Z"
-          fill="#02DEF1"
+          fill="#39E900"
         />
 
         {/* ======================================================== */}
@@ -328,7 +328,7 @@ export default function RocketIllustration({
         {/* Outer Bezel Ring */}
         <circle cx="190" cy="180" r="38" fill="url(#bezelGrad)" />
         {/* Chrome Inset */}
-        <circle cx="190" cy="180" r="31" fill="#002F4D" />
+        <circle cx="190" cy="180" r="31" fill="#10251A" />
         {/* Deep Curved Glass */}
         <circle cx="190" cy="180" r="28" fill="url(#glassReflex)" />
         {/* Glass Specular Crescent Reflection */}
@@ -340,7 +340,7 @@ export default function RocketIllustration({
         {/* Mini Accent Star in Cockpit */}
         <polygon
           points="190,172 192,178 198,180 192,182 190,188 188,182 182,180 188,178"
-          fill="#02DEF1"
+          fill="#39E900"
           opacity="0.95"
         />
 
@@ -357,7 +357,7 @@ export default function RocketIllustration({
           y1="235"
           x2="190"
           y2="337"
-          stroke="#02DEF1"
+          stroke="#39E900"
           strokeWidth="2.5"
           strokeLinecap="round"
         />
@@ -370,7 +370,7 @@ export default function RocketIllustration({
           y1="210"
           x2="156"
           y2="210"
-          stroke="#DCECEF"
+          stroke="#C4DEC4"
           strokeWidth="1.5"
           strokeDasharray="3 3"
         />
@@ -379,12 +379,12 @@ export default function RocketIllustration({
           y1="210"
           x2="248"
           y2="210"
-          stroke="#DCECEF"
+          stroke="#C4DEC4"
           strokeWidth="1.5"
           strokeDasharray="3 3"
         />
-        <circle cx="138" cy="210" r="1.5" fill="#7E9FA8" />
-        <circle cx="242" cy="210" r="1.5" fill="#7E9FA8" />
+        <circle cx="138" cy="210" r="1.5" fill="#7E9F7E" />
+        <circle cx="242" cy="210" r="1.5" fill="#7E9F7E" />
       </svg>
     </div>
   );

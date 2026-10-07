@@ -31,7 +31,7 @@ export default function HomePage() {
       */}
       <div
         id="trust-card"
-        className="sticky top-0 z-20 w-full min-h-screen rounded-t-[44px] sm:rounded-t-[60px] bg-white shadow-[0_-30px_90px_rgba(0,51,81,0.12)] border-t border-[#DCECEF] flex flex-col justify-center"
+        className="sticky top-0 z-20 w-full min-h-screen rounded-t-[44px] sm:rounded-t-[60px] bg-white shadow-[0_-30px_90px_rgba(0,0,0,0.18)] border-t border-[#D8E7D8] flex flex-col justify-center"
       >
         <TrustSection />
       </div>
@@ -42,7 +42,7 @@ export default function HomePage() {
       */}
       <div
         id="about-card"
-        className="sticky top-0 z-30 w-full min-h-screen rounded-t-[44px] sm:rounded-t-[60px] bg-[#E9FAFC] shadow-[0_-30px_90px_rgba(0,51,81,0.12)] border-t border-[#DCECEF] flex flex-col justify-center"
+        className="sticky top-0 z-30 w-full min-h-screen rounded-t-[44px] sm:rounded-t-[60px] bg-[#E9F8E9] shadow-[0_-30px_90px_rgba(0,0,0,0.18)] border-t border-[#D8E7D8] flex flex-col justify-center"
       >
         <AboutSection />
       </div>
@@ -53,7 +53,7 @@ export default function HomePage() {
       */}
       <div
         id="services-card"
-        className="sticky top-0 z-40 w-full min-h-screen rounded-t-[44px] sm:rounded-t-[60px] bg-white shadow-[0_-30px_90px_rgba(0,51,81,0.12)] border-t border-[#DCECEF] flex flex-col justify-center"
+        className="sticky top-0 z-40 w-full min-h-screen rounded-t-[44px] sm:rounded-t-[60px] bg-white shadow-[0_-30px_90px_rgba(0,0,0,0.18)] border-t border-[#D8E7D8] flex flex-col justify-center"
       >
         <ServicesSection />
       </div>
@@ -64,7 +64,7 @@ export default function HomePage() {
       */}
       <div
         id="projects-card"
-        className="sticky top-0 z-50 w-full min-h-screen rounded-t-[44px] sm:rounded-t-[60px] bg-[#F5F8F9] shadow-[0_-30px_90px_rgba(0,51,81,0.12)] border-t border-[#DCECEF] flex flex-col justify-center"
+        className="sticky top-0 z-50 w-full min-h-screen rounded-t-[44px] sm:rounded-t-[60px] bg-[#F7FBF7] shadow-[0_-30px_90px_rgba(0,0,0,0.18)] border-t border-[#D8E7D8] flex flex-col justify-center"
       >
         <ProjectsSection />
       </div>
@@ -75,7 +75,7 @@ export default function HomePage() {
       */}
       <div
         id="why-card"
-        className="sticky top-0 z-60 w-full min-h-screen rounded-t-[44px] sm:rounded-t-[60px] bg-[#E9FAFC] shadow-[0_-30px_90px_rgba(0,51,81,0.12)] border-t border-[#DCECEF] flex flex-col justify-center"
+        className="sticky top-0 z-60 w-full min-h-screen rounded-t-[44px] sm:rounded-t-[60px] bg-[#E9F8E9] shadow-[0_-30px_90px_rgba(0,0,0,0.18)] border-t border-[#D8E7D8] flex flex-col justify-center"
       >
         <WhyChooseUs />
       </div>
@@ -86,7 +86,7 @@ export default function HomePage() {
       */}
       <div
         id="process-card"
-        className="sticky top-0 z-70 w-full min-h-screen rounded-t-[44px] sm:rounded-t-[60px] bg-white shadow-[0_-30px_90px_rgba(0,51,81,0.12)] border-t border-[#DCECEF] flex flex-col justify-center"
+        className="sticky top-0 z-70 w-full min-h-screen rounded-t-[44px] sm:rounded-t-[60px] bg-white shadow-[0_-30px_90px_rgba(0,0,0,0.18)] border-t border-[#D8E7D8] flex flex-col justify-center"
       >
         <ProcessSection />
       </div>
@@ -97,7 +97,7 @@ export default function HomePage() {
       */}
       <div
         id="cta-card"
-        className="sticky top-0 z-80 w-full min-h-screen rounded-t-[44px] sm:rounded-t-[60px] bg-[#002F4D] text-white shadow-[0_-35px_90px_rgba(0,51,81,0.25)] border-t border-[#0194A6]/30 flex flex-col justify-center"
+        className="sticky top-0 z-80 w-full min-h-screen rounded-t-[44px] sm:rounded-t-[60px] bg-[#10251A] text-white shadow-[0_-35px_90px_rgba(0,0,0,0.25)] border-t border-white/15 flex flex-col justify-center"
       >
         <CTASection />
       </div>

@@ -52,89 +52,93 @@ export default function Hero() {
           {/* Ambient background glows */}
           <div
             aria-hidden="true"
-            className="absolute top-12 right-1/4 w-[450px] h-[450px] bg-[#E9FAFC] rounded-full blur-3xl pointer-events-none -z-10"
+            className="absolute top-12 right-1/4 w-[450px] h-[450px] bg-[#E9F8E9] rounded-full blur-3xl pointer-events-none -z-10"
           />
           <div
             aria-hidden="true"
-            className="absolute top-1/3 -right-24 w-[380px] h-[380px] bg-[#02DEF1]/15 rounded-full blur-3xl pointer-events-none -z-10"
+            className="absolute top-1/3 -right-24 w-[380px] h-[380px] bg-[#39E900]/12 rounded-full blur-3xl pointer-events-none -z-10"
           />
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
-              {/* Left Column: Typography & CTAs (approx 45% / 5 cols) - 100% UNCHANGED */}
+              {/* Left Column: Typography & CTAs with smooth staggered entrance on refresh */}
               <div className="lg:col-span-5 flex flex-col items-start text-left z-10">
                 {/* Eyebrow Badge */}
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E9FAFC] border border-[#DCECEF] shadow-xs mb-6">
-                  <span className="w-2 h-2 rounded-full bg-[#02DEF1] animate-pulse" />
-                  <span className="text-[11px] font-black tracking-widest text-[#0194A6] uppercase">
+                <div className="animate-hero-badge inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E9F8E9] border border-[#D8E7D8] shadow-xs mb-6">
+                  <span className="w-2 h-2 rounded-full bg-[#39E900] animate-pulse" />
+                  <span className="text-[11px] font-black tracking-widest text-[#006B21] uppercase">
                     BUILD • GROW • SCALE
                   </span>
                 </div>
 
-                {/* Big Headline in Navy */}
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-[#003351] tracking-tight leading-[1.08] mb-6">
-                  Big Ideas. <br />
-                  <span className="text-[#0194A6] relative inline-block">
-                    Built for Real
-                    <svg
-                      aria-hidden="true"
-                      className="absolute -bottom-2 left-0 w-full h-3 text-[#02DEF1]"
-                      viewBox="0 0 200 12"
-                      fill="none"
-                    >
-                      <path
-                        d="M2 9C58 3 142 3 198 9"
-                        stroke="currentColor"
-                        strokeWidth="3.5"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  </span>{" "}
-                  Growth.
+                {/* Big Headline in Pure Black with Deep Green & Neon Lime Accent */}
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-[#050505] tracking-tight leading-[1.08] mb-6">
+                  <span className="block animate-hero-title-1">
+                    Big Ideas.
+                  </span>
+                  <span className="block animate-hero-title-2 mt-1 sm:mt-1.5">
+                    <span className="text-[#006B21] relative inline-block">
+                      Built for Real
+                      <svg
+                        aria-hidden="true"
+                        className="absolute -bottom-2 left-0 w-full h-3 text-[#39E900]"
+                        viewBox="0 0 200 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M2 9C58 3 142 3 198 9"
+                          stroke="currentColor"
+                          strokeWidth="3.5"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    </span>{" "}
+                    Growth.
+                  </span>
                 </h1>
 
                 {/* Supporting Paragraph */}
-                <p className="text-base sm:text-lg text-[#344054] leading-relaxed max-w-xl mb-8">
+                <p className="animate-hero-desc text-base sm:text-lg text-[#4D5C52] leading-relaxed max-w-xl mb-8">
                   We engineer thoughtful digital platforms, high-velocity Next.js products, and conversion-focused systems that help ambitious companies launch, scale, and dominate their category.
                 </p>
 
                 {/* Dual CTA Buttons */}
-                <div className="flex flex-wrap items-center gap-3.5 w-full sm:w-auto">
+                <div className="animate-hero-cta flex flex-wrap items-center gap-3.5 w-full sm:w-auto">
                   <button
                     type="button"
                     onClick={() => setModalOpen(true)}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full bg-[#0194A6] text-white font-bold text-sm hover:bg-[#003351] shadow-md hover:shadow-lg active:scale-[0.98] transition-all duration-200 group cursor-pointer"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full bg-[#006B21] text-white font-bold text-sm hover:bg-[#10251A] shadow-md hover:shadow-lg active:scale-[0.98] transition-all duration-200 group cursor-pointer"
                   >
                     <span>Get Started</span>
-                    <span className="w-5 h-5 rounded-full bg-[#02DEF1] text-[#003351] flex items-center justify-center transition-transform group-hover:translate-x-1">
+                    <span className="w-5 h-5 rounded-full bg-[#39E900] text-[#050505] flex items-center justify-center transition-transform group-hover:translate-x-1">
                       <ArrowRightIcon size={12} strokeWidth={3} />
                     </span>
                   </button>
 
                   <Link
                     href="/projects"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-white border border-[#DCECEF] text-[#003351] font-bold text-sm hover:bg-[#E9FAFC] hover:border-[#0194A6]/40 transition-all duration-200"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-white border border-[#D8E7D8] text-[#050505] font-bold text-sm hover:bg-[#E9F8E9] hover:border-[#006B21]/40 transition-all duration-200"
                   >
                     <span>View Projects</span>
-                    <ArrowUpRightIcon size={16} className="text-[#344054]" />
+                    <ArrowUpRightIcon size={16} className="text-[#4D5C52]" />
                   </Link>
                 </div>
 
                 {/* Social Proof */}
-                <div className="mt-8 pt-6 border-t border-[#DCECEF] w-full flex items-center gap-4">
+                <div className="animate-hero-proof mt-8 pt-6 border-t border-[#D8E7D8] w-full flex items-center gap-4">
                   <div className="flex -space-x-2">
-                    <div className="w-8 h-8 rounded-full bg-[#002F4D] border-2 border-white flex items-center justify-center text-[10px] font-black text-[#02DEF1]">
+                    <div className="w-8 h-8 rounded-full bg-[#10251A] border-2 border-white flex items-center justify-center text-[10px] font-black text-[#39E900]">
                       AL
                     </div>
-                    <div className="w-8 h-8 rounded-full bg-[#0194A6] border-2 border-white flex items-center justify-center text-[10px] font-black text-white">
+                    <div className="w-8 h-8 rounded-full bg-[#006B21] border-2 border-white flex items-center justify-center text-[10px] font-black text-white">
                       KS
                     </div>
-                    <div className="w-8 h-8 rounded-full bg-[#02DEF1] border-2 border-white flex items-center justify-center text-[10px] font-black text-[#003351]">
+                    <div className="w-8 h-8 rounded-full bg-[#39E900] border-2 border-white flex items-center justify-center text-[10px] font-black text-[#050505]">
                       TR
                     </div>
                   </div>
-                  <div className="text-xs text-[#344054]">
-                    <span className="font-bold text-[#003351]">50+ venture-backed clients</span> scaling with zero bloat code.
+                  <div className="text-xs text-[#4D5C52]">
+                    <span className="font-bold text-[#050505]">50+ venture-backed clients</span> scaling with zero bloat code.
                   </div>
                 </div>
               </div>

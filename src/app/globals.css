@@ -1,49 +1,20 @@
 @import "tailwindcss";
 
 @theme {
-  --color-pure-black: #003351;
-  --color-growth-green: #0194A6;
-  --color-neon-lime: #02DEF1;
-  --color-soft-mint: #E9FAFC;
-  --color-off-white: #FFFFFF;
-  --color-dark-forest: #002F4D;
-  --color-muted-text: #344054;
-  --color-card-border: #DCECEF;
-
-  /* Explicit GrowBroo Tokens */
-  --color-navy: #003351;
-  --color-deep-navy: #012F51;
-  --color-dark-navy: #002F4D;
-  --color-cyan: #0194A6;
-  --color-bright-cyan: #02DEF1;
-  --color-light-cyan: #8DECF2;
-  --color-pale-cyan: #E9FAFC;
-  --color-light-gray: #F5F8F9;
-  --color-text-gray: #344054;
-  --color-border: #DCECEF;
-
+  --color-pure-black: #050505;
+  --color-growth-green: #006B21;
+  --color-neon-lime: #39E900;
+  --color-soft-mint: #E9F8E9;
+  --color-off-white: #F7FBF7;
+  --color-dark-forest: #10251A;
+  --color-muted-text: #4D5C52;
+  --color-card-border: #D8E7D8;
   --font-sans: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 :root {
-  --navy: #003351;
-  --deep-navy: #012F51;
-  --dark-navy: #002F4D;
-
-  --cyan: #0194A6;
-  --bright-cyan: #02DEF1;
-  --light-cyan: #8DECF2;
-  --pale-cyan: #E9FAFC;
-
-  --white: #FFFFFF;
-  --off-white: #FEFEFE;
-  --light-gray: #F5F8F9;
-
-  --text: #344054;
-  --border: #DCECEF;
-
   --background: #FFFFFF;
-  --foreground: #003351;
+  --foreground: #050505;
 }
 
 html {
@@ -80,10 +51,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* GrowBroo selection color */
+/* Subtle selection color */
 ::selection {
-  background-color: #02DEF1;
-  color: #003351;
+  background-color: #39E900;
+  color: #050505;
 }
 
 /* Custom minimal scrollbar */
@@ -91,31 +62,14 @@ body {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #F5F8F9;
+  background: #F7FBF7;
 }
 ::-webkit-scrollbar-thumb {
-  background: #DCECEF;
+  background: #C4DEC4;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #0194A6;
-}
-
-/* Website Gradients */
-.bg-gradient-primary {
-  background: linear-gradient(135deg, #003351 0%, #0194A6 100%);
-}
-
-.bg-gradient-cta {
-  background: linear-gradient(135deg, #0194A6 0%, #02DEF1 100%);
-}
-
-.bg-gradient-dark {
-  background: linear-gradient(135deg, #002F4D 0%, #003351 55%, #0194A6 100%);
-}
-
-.bg-gradient-light {
-  background: linear-gradient(135deg, #FFFFFF 0%, #E9FAFC 100%);
+  background: #006B21;
 }
 
 /* Smooth Continuous Wave Fire Animations */
@@ -193,6 +147,60 @@ body {
 
 .animate-subtle-float {
   animation: subtleFloat 3.8s ease-in-out infinite;
+}
+
+/* Cutting-Edge Cinematic Progressive Reveal synced with 10s Hero Animation Video */
+@keyframes modernTextReveal {
+  0% {
+    opacity: 0;
+    filter: blur(12px);
+    transform: translateY(32px) scale(0.97);
+  }
+  30% {
+    opacity: 0.5;
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Phase 1 (0.6s -> 2.4s): Laptop begins opening -> Eyebrow badge gently de-blurs & floats in */
+.animate-hero-badge {
+  animation: modernTextReveal 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+  will-change: transform, opacity, filter;
+}
+
+/* Phase 2A (1.8s -> 4.0s): Laptop opens up -> "Big Ideas." line 1 smoothly emerges */
+.animate-hero-title-1 {
+  animation: modernTextReveal 2.2s cubic-bezier(0.16, 1, 0.3, 1) 1.8s both;
+  will-change: transform, opacity, filter;
+}
+
+/* Phase 2B (2.8s -> 5.2s): Laptop screen lights up -> "Built for Real Growth." reveals with green highlight */
+.animate-hero-title-2 {
+  animation: modernTextReveal 2.4s cubic-bezier(0.16, 1, 0.3, 1) 2.8s both;
+  will-change: transform, opacity, filter;
+}
+
+/* Phase 3 (4.5s -> 6.7s): 3D service cards float out of screen -> Supporting description glides in */
+.animate-hero-desc {
+  animation: modernTextReveal 2.2s cubic-bezier(0.16, 1, 0.3, 1) 4.5s both;
+  will-change: transform, opacity, filter;
+}
+
+/* Phase 4 (6.0s -> 8.0s): 3D rocket emerges & thrusters ignite -> CTA action buttons slide in smoothly */
+.animate-hero-cta {
+  animation: modernTextReveal 2.0s cubic-bezier(0.16, 1, 0.3, 1) 6.0s both;
+  will-change: transform, opacity, filter;
+}
+
+/* Phase 5 (7.2s -> 9.2s): Rocket launches upward at peak -> Trust proof & client avatars lock into place */
+.animate-hero-proof {
+  animation: modernTextReveal 2.0s cubic-bezier(0.16, 1, 0.3, 1) 7.2s both;
+  will-change: transform, opacity, filter;
 }
 
 /* Respect user motion preference */

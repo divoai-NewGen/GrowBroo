@@ -24,8 +24,8 @@ export const featuredProjects: ProjectItem[] = [
     description: "Architected a zero-latency Next.js client portal processing $18M+ daily liquidity with real-time audit logs.",
     metric: "+280% User Activation",
     tags: ["Next.js", "TypeScript", "Tailwind CSS"],
-    gradientBg: "from-[#002F4D] to-[#003351]",
-    mockupAccent: "#02DEF1",
+    gradientBg: "from-[#10251A] to-[#006B21]",
+    mockupAccent: "#39E900",
     badge: "Case Study",
   },
   {
@@ -36,8 +36,8 @@ export const featuredProjects: ProjectItem[] = [
     description: "Designed a clean, frictionless booking experience resulting in a 4.2x increase in digital appointment confirmations.",
     metric: "4.9/5 App Rating",
     tags: ["Design System", "Figma", "Accessibility WCAG AAA"],
-    gradientBg: "from-[#012F51] to-[#0194A6]",
-    mockupAccent: "#E9FAFC",
+    gradientBg: "from-[#0A1A12] to-[#006B21]",
+    mockupAccent: "#E9F8E9",
     badge: "Design Award",
   },
   {
@@ -48,8 +48,8 @@ export const featuredProjects: ProjectItem[] = [
     description: "Re-engineered an international commerce storefront delivering 18ms Edge render times and a 34% checkout uplift.",
     metric: "+34% Checkout Rate",
     tags: ["Headless Commerce", "Edge CDN", "Stripe API"],
-    gradientBg: "from-[#002F4D] to-[#0194A6]",
-    mockupAccent: "#02DEF1",
+    gradientBg: "from-[#10251A] to-[#025019]",
+    mockupAccent: "#39E900",
     badge: "E-Commerce",
   },
   {
@@ -60,8 +60,8 @@ export const featuredProjects: ProjectItem[] = [
     description: "Engineered responsive canvas tools and intelligent asset management handling 2.4M monthly synthesis jobs.",
     metric: "120k+ Active Users",
     tags: ["AI Tools", "WebSockets", "Serverless"],
-    gradientBg: "from-[#0194A6] to-[#002F4D]",
-    mockupAccent: "#02DEF1",
+    gradientBg: "from-[#006B21] to-[#10251A]",
+    mockupAccent: "#39E900",
     badge: "AI Platform",
   },
   {
@@ -72,8 +72,8 @@ export const featuredProjects: ProjectItem[] = [
     description: "Migrated legacy monolith to modern micro-frontend architecture reducing cold starts from 3.2s down to 240ms.",
     metric: "99.99% SLA Uptime",
     tags: ["Next.js App Router", "REST API", "Telemetry"],
-    gradientBg: "from-[#002F4D] to-[#003351]",
-    mockupAccent: "#02DEF1",
+    gradientBg: "from-[#10251A] to-[#006B21]",
+    mockupAccent: "#39E900",
     badge: "Enterprise",
   },
   {
@@ -84,8 +84,8 @@ export const featuredProjects: ProjectItem[] = [
     description: "Crafted an immersive brand universe and interactive digital experience for a Paris-based architectural collective.",
     metric: "14 International Mentions",
     tags: ["Identity", "Typography", "Interactive Web"],
-    gradientBg: "from-[#012F51] to-[#0194A6]",
-    mockupAccent: "#E9FAFC",
+    gradientBg: "from-[#09160F] to-[#006B21]",
+    mockupAccent: "#E9F8E9",
     badge: "Branding",
   },
 ];
@@ -97,20 +97,20 @@ export default function ProjectsSection() {
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-12 gap-6">
           <div className="max-w-2xl">
-            <span className="inline-block px-3.5 py-1 text-xs font-black uppercase tracking-wider text-[#0194A6] bg-[#E9FAFC] border border-[#DCECEF] rounded-full mb-3">
+            <span className="inline-block px-3.5 py-1 text-xs font-black uppercase tracking-wider text-[#006B21] bg-[#E9F8E9] border border-[#D8E7D8] rounded-full mb-3">
               SELECTED WORK
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#003351] tracking-tight leading-[1.15]">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#050505] tracking-tight leading-[1.15]">
               Projects we&apos;re proud of.
             </h2>
-            <p className="text-base sm:text-lg text-[#344054] mt-3">
+            <p className="text-base sm:text-lg text-[#4D5C52] mt-3">
               Explore how we engineer ambitious platforms that deliver measurable commercial outcomes for industry pioneers.
             </p>
           </div>
           <div>
             <Link
               href="/projects"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#0194A6] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#003351] transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#006B21] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#10251A] transition-colors shadow-sm"
             >
               <span>View All 18+ Projects</span>
               <ArrowRightIcon size={14} />
@@ -123,7 +123,7 @@ export default function ProjectsSection() {
           {featuredProjects.slice(0, 3).map((project) => (
             <article
               key={project.id}
-              className="group bg-white rounded-3xl overflow-hidden border border-[#DCECEF] hover:border-[#0194A6]/50 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+              className="group bg-white rounded-3xl overflow-hidden border border-[#D8E7D8] hover:border-[#006B21]/50 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
             >
               {/* Visual Card Image */}
               <div
@@ -140,7 +140,7 @@ export default function ProjectsSection() {
                     {project.badge}
                   </span>
                   <span
-                    className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white group-hover:scale-110 group-hover:bg-[#02DEF1] group-hover:text-[#003351] transition-all duration-300"
+                    className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white group-hover:scale-110 group-hover:bg-[#39E900] group-hover:text-[#050505] transition-all duration-300"
                   >
                     <ArrowUpRightIcon size={16} />
                   </span>
@@ -150,7 +150,7 @@ export default function ProjectsSection() {
                 <div className="relative z-10 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 transform group-hover:scale-[1.03] transition-transform duration-300">
                   <div className="flex items-center justify-between text-xs text-white/80 pb-2 border-b border-white/10">
                     <span className="font-semibold">{project.name}</span>
-                    <span className="text-[11px] font-mono text-[#02DEF1]">Live Prod</span>
+                    <span className="text-[11px] font-mono text-[#39E900]">Live Prod</span>
                   </div>
                   <div className="pt-2 flex items-center justify-between">
                     <div className="text-xl font-black text-white">{project.metric}</div>
@@ -165,24 +165,24 @@ export default function ProjectsSection() {
               {/* Content Details */}
               <div className="p-7 flex flex-col flex-1 justify-between">
                 <div>
-                  <span className="text-[11px] font-black uppercase tracking-wider text-[#0194A6] block mb-1">
+                  <span className="text-[11px] font-black uppercase tracking-wider text-[#006B21] block mb-1">
                     {project.category}
                   </span>
-                  <h3 className="text-xl font-bold text-[#003351] tracking-tight group-hover:text-[#0194A6] transition-colors mb-2">
+                  <h3 className="text-xl font-bold text-[#050505] tracking-tight group-hover:text-[#006B21] transition-colors mb-2">
                     {project.name}
                   </h3>
-                  <p className="text-xs text-[#344054] leading-relaxed line-clamp-3 mb-6">
+                  <p className="text-xs text-[#4D5C52] leading-relaxed line-clamp-3 mb-6">
                     {project.description}
                   </p>
                 </div>
 
                 {/* Tech Tags & Footer */}
-                <div className="pt-4 border-t border-[#DCECEF] flex items-center justify-between">
+                <div className="pt-4 border-t border-[#E9F8E9] flex items-center justify-between">
                   <div className="flex flex-wrap gap-1.5">
                     {project.tags.slice(0, 2).map((tag) => (
                       <span
                         key={tag}
-                        className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-[#E9FAFC] text-[#003351] border border-[#DCECEF]"
+                        className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-[#E9F8E9] text-[#050505] border border-[#D8E7D8]"
                       >
                         {tag}
                       </span>
@@ -191,7 +191,7 @@ export default function ProjectsSection() {
 
                   <Link
                     href={`/projects#${project.id}`}
-                    className="inline-flex items-center gap-1 text-xs font-bold text-[#0194A6] hover:text-[#003351] transition-colors"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-[#006B21] hover:text-[#10251A] transition-colors"
                   >
                     <span>Details</span>
                     <ArrowRightIcon
