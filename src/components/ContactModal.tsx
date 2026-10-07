@@ -38,17 +38,37 @@ export default function ContactModal({ isOpen, onClose, defaultService = "Web De
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/enquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, service, budget, message }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to submit inquiry");
+      }
+
       setSubmitted(true);
-    }, 600);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleReset = () => {
     setSubmitted(false);
+    setError(null);
     setName("");
     setEmail("");
     setMessage("");
@@ -192,6 +212,12 @@ export default function ContactModal({ isOpen, onClose, defaultService = "Web De
                   className="w-full px-4 py-2.5 rounded-xl border border-[#D8E7D8] bg-white text-[#050505] placeholder:text-[#4D5C52]/50 text-sm focus:outline-none focus:border-[#006B21] focus:ring-2 focus:ring-[#39E900]/30 transition-all resize-none"
                 />
               </div>
+
+              {error && (
+                <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold">
+                  {error}
+                </div>
+              )}
 
               <div className="pt-2">
                 <button

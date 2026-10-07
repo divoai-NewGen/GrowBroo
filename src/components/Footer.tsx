@@ -142,6 +142,9 @@ export default function Footer() {
             <span className="hover:text-white transition-colors cursor-pointer">
               Security &amp; SLAs
             </span>
+            <Link href="/admin" className="hover:text-[#39E900] transition-colors text-white/40 hover:text-white">
+              Admin Console ⚡
+            </Link>
           </div>
         </div>
       </div>

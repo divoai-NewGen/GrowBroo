@@ -1,0 +1,50 @@
+[
+  {
+    "id": "enq_1791351212689_qxjx",
+    "name": "Rahul Sharma",
+    "email": "rahul@technovate.in",
+    "company": "Technovate Retail",
+    "service": "Digital Ads & Growth",
+    "budget": " - ",
+    "message": "We want to scale our offline retail chain to pan-India via Google & Meta Ads.",
+    "status": "New",
+    "createdAt": "2026-10-07T05:33:32.689Z",
+    "emailSent": false
+  },
+  {
+    "id": "enq_1738831001",
+    "name": "Sarah Jenkins",
+    "email": "sarah.jenkins@acmehealth.io",
+    "company": "Acme Health Technologies",
+    "service": "Web Development",
+    "budget": "$10k - $25k",
+    "message": "Looking to redesign our B2B SaaS platform with Next.js and high-speed animations. Need MVP launched in 6 weeks.",
+    "status": "New",
+    "createdAt": "2026-10-07T08:30:00.000Z",
+    "emailSent": true
+  },
+  {
+    "id": "enq_1738831002",
+    "name": "Vikram Malhotra",
+    "email": "vikram@finscale.co",
+    "company": "FinScale Solutions",
+    "service": "AI & Workflow Automation",
+    "budget": "$25k - $50k",
+    "message": "We need custom AI customer onboarding workflows and high-converting landing pages for our fintech launch.",
+    "status": "In Discussion",
+    "createdAt": "2026-10-06T14:15:00.000Z",
+    "emailSent": true
+  },
+  {
+    "id": "enq_1738831003",
+    "name": "David Miller",
+    "email": "david@urbannest.shop",
+    "company": "UrbanNest Home Decor",
+    "service": "Headless E-commerce",
+    "budget": "$10k - $25k",
+    "message": "Transitioning our retail offline store to Shopify headless with high performance and mobile-first speed.",
+    "status": "Contacted",
+    "createdAt": "2026-10-05T11:45:00.000Z",
+    "emailSent": true
+  }
+]
