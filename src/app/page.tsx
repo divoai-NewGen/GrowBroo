@@ -1,4 +1,7 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
+import LaptopIntro from "@/components/LaptopIntro";
 import Hero from "@/components/Hero";
 import TrustSection from "@/components/TrustSection";
 import AboutSection from "@/components/AboutSection";
@@ -9,8 +12,16 @@ import ProcessSection from "@/components/ProcessSection";
 import CTASection from "@/components/CTASection";
 
 export default function HomePage() {
+  const [introFinished, setIntroFinished] = useState(false);
+
   return (
-    <main className="relative w-full overflow-x-clip bg-white">
+    <>
+      {!introFinished && <LaptopIntro onFinish={() => setIntroFinished(true)} />}
+      <main
+        className={`relative w-full overflow-x-clip bg-white transition-opacity duration-700 ${
+          introFinished ? "opacity-100" : "opacity-0"
+        }`}
+      >
       {/* 
         Card 1: Hero Launchpad Stage (z-10)
         Calibrated runway height (138vh) so the exact moment the rocket clears the top,
@@ -102,5 +113,6 @@ export default function HomePage() {
         <CTASection />
       </div>
     </main>
+    </>
   );
 }
