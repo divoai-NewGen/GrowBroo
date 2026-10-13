@@ -21,7 +21,8 @@ html {
   color-scheme: light;
 }
 
-html.lenis, html.lenis body {
+html.lenis,
+html.lenis body {
   height: auto;
 }
 
@@ -61,13 +62,16 @@ body {
 ::-webkit-scrollbar {
   width: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: #F7FBF7;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #C4DEC4;
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #006B21;
 }
@@ -79,11 +83,13 @@ body {
     filter: drop-shadow(0 14px 22px rgba(255, 140, 0, 0.75)) drop-shadow(0 0 28px rgba(255, 200, 0, 0.55));
     opacity: 0.92;
   }
+
   50% {
     transform: scaleY(1.15) scaleX(1.06);
     filter: drop-shadow(0 22px 36px rgba(255, 100, 0, 0.95)) drop-shadow(0 0 45px rgba(255, 220, 50, 0.8));
     opacity: 1;
   }
+
   100% {
     transform: scaleY(1) scaleX(1);
     filter: drop-shadow(0 14px 22px rgba(255, 140, 0, 0.75)) drop-shadow(0 0 28px rgba(255, 200, 0, 0.55));
@@ -96,10 +102,12 @@ body {
     transform: scaleY(1) translateY(0);
     opacity: 0.9;
   }
+
   50% {
     transform: scaleY(1.16) translateY(3px);
     opacity: 1;
   }
+
   100% {
     transform: scaleY(1) translateY(0);
     opacity: 0.9;
@@ -111,10 +119,12 @@ body {
     transform: translateY(0);
     opacity: 0.75;
   }
+
   50% {
     transform: translateY(-8px);
     opacity: 1;
   }
+
   100% {
     transform: translateY(0);
     opacity: 0.75;
@@ -137,9 +147,12 @@ body {
 
 /* Subtle natural floating animation for idle rocket */
 @keyframes subtleFloat {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px) rotate(0deg);
   }
+
   50% {
     transform: translateY(-8px) rotate(0.6deg);
   }
@@ -156,10 +169,12 @@ body {
     filter: blur(12px);
     transform: translateY(32px) scale(0.97);
   }
+
   30% {
     opacity: 0.5;
     filter: blur(4px);
   }
+
   100% {
     opacity: 1;
     filter: blur(0px);
@@ -205,7 +220,10 @@ body {
 
 /* Respect user motion preference */
 @media (prefers-reduced-motion: reduce) {
-  *, ::before, ::after {
+
+  *,
+  ::before,
+  ::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
