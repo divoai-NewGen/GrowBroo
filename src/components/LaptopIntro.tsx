@@ -55,6 +55,46 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleOpen, handleSkip]);
 
+  // Scroll & Wheel controls: user halka scroll bhi kare to laptop open ho jaye
+  useEffect(() => {
+    let touchStartY = 0;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaY) > 2 || Math.abs(e.deltaX) > 2) {
+        if (stageRef.current === "closed") {
+          setStage("opening");
+        } else if (stageRef.current === "open") {
+          setStage("zooming");
+        }
+      }
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const diffY = touchStartY - e.touches[0].clientY;
+      if (Math.abs(diffY) > 6) {
+        if (stageRef.current === "closed") {
+          setStage("opening");
+        } else if (stageRef.current === "open") {
+          setStage("zooming");
+        }
+      }
+    };
+
+    window.addEventListener("wheel", handleWheel, { passive: true });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, []);
+
   useEffect(() => {
     const container = mountRef.current;
     if (!container) return;
@@ -735,7 +775,7 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
       style={{ touchAction: "manipulation" }}
       aria-label="Interactive 3D Laptop Experience"
     >
-      {/* Top Header Bar */}
+      {/* Top Branding */}
       <div className="absolute top-0 left-0 right-0 p-4 sm:p-6 flex items-center justify-between pointer-events-none z-10">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-[#006B21] flex items-center justify-center text-white font-bold text-sm shadow-md shadow-[#006B21]/20">
@@ -750,62 +790,6 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
             </span>
           </div>
         </div>
-
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleSkip();
-          }}
-          className="pointer-events-auto px-4 py-2 rounded-full bg-white/90 hover:bg-white text-gray-900 text-xs sm:text-sm font-semibold tracking-wide border border-gray-200/80 shadow-sm hover:shadow transition-all duration-200 flex items-center gap-2"
-        >
-          <span>SKIP INTRO</span>
-          <span className="text-base leading-none">→</span>
-        </button>
-      </div>
-
-      {/* Bottom Floating Interactive Call-To-Action */}
-      <div className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10 pointer-events-none text-center">
-        {stage === "closed" && (
-          <>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleOpen();
-              }}
-              className="pointer-events-auto px-7 py-3.5 rounded-full bg-[#006B21] hover:bg-[#00551a] text-white text-sm sm:text-base font-bold shadow-xl shadow-[#006B21]/30 hover:scale-105 active:scale-95 transition-all duration-200 flex items-center gap-3 group"
-            >
-              <span className="w-2.5 h-2.5 rounded-full bg-[#39E900] animate-pulse" />
-              <span>CLICK TO OPEN LAPTOP</span>
-              <span className="group-hover:translate-x-1 transition-transform">→</span>
-            </button>
-            <p className="text-xs sm:text-sm font-medium text-gray-700 drop-shadow-sm">
-              Interactive 3D Showcase • Press Space or Click Anywhere
-            </p>
-          </>
-        )}
-
-        {stage === "opening" && (
-          <div className="px-6 py-2.5 rounded-full bg-black/80 backdrop-blur-md text-white text-xs sm:text-sm font-semibold tracking-wide flex items-center gap-2 shadow-lg">
-            <span className="w-2 h-2 rounded-full bg-[#39E900] animate-ping" />
-            <span>OPENING RETINA DISPLAY...</span>
-          </div>
-        )}
-
-        {(stage === "open" || stage === "zooming") && (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleSkip();
-            }}
-            className="pointer-events-auto px-7 py-3 rounded-full bg-[#006B21] hover:bg-[#00551a] text-white text-xs sm:text-sm font-bold tracking-wide flex items-center gap-2 shadow-xl hover:scale-105 active:scale-95 transition-all"
-          >
-            <span className="w-2 h-2 rounded-full bg-[#39E900]" />
-            <span>ENTER STUDIO NOW →</span>
-          </button>
-        )}
       </div>
     </div>
   );
