@@ -80,7 +80,7 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
       const distFromHeight = targetHeight / (2 * Math.tan(vFovRad));
       const dist = Math.max(distFromWidth, distFromHeight, 6.8);
 
-      // Elevated 3D studio perspective centered on the opened laptop height (Y = 0.65)
+      // Elevated 3/4 studio perspective centered on the opened laptop height (Y = 0.65)
       camera.position.set(0, dist * 0.44, dist * 0.88);
       camera.lookAt(0, 0.65, 0);
     };
@@ -98,16 +98,16 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
+    renderer.toneMappingExposure = 1.18;
     container.appendChild(renderer.domElement);
 
-    // 4. Studio Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.4);
+    // 4. Studio Lighting (Clean, neutral white for authentic Apple Silver aluminum)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.45);
     scene.add(ambientLight);
 
-    // Main Studio Key Light (soft directional from top right)
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.2);
-    keyLight.position.set(4, 8, 5);
+    // Main Studio Key Light (soft white directional from top-right)
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.4);
+    keyLight.position.set(5, 9, 6);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 1024;
     keyLight.shadow.mapSize.height = 1024;
@@ -116,14 +116,14 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     keyLight.shadow.bias = -0.0008;
     scene.add(keyLight);
 
-    // Fill Light (soft mint-tinted fill from top left)
-    const fillLight = new THREE.DirectionalLight(0xe8f5e9, 1.2);
-    fillLight.position.set(-5, 6, 4);
+    // Fill Light (soft clean fill from top-left)
+    const fillLight = new THREE.DirectionalLight(0xf1f5f9, 1.3);
+    fillLight.position.set(-6, 6, 4);
     scene.add(fillLight);
 
-    // Rim Light (creates aluminum highlights along back edge)
-    const rimLight = new THREE.DirectionalLight(0xffffff, 1.6);
-    rimLight.position.set(0, 6, -5);
+    // Specular Rim Light (creates crisp aluminum edge reflections along curved corners)
+    const rimLight = new THREE.DirectionalLight(0xffffff, 1.8);
+    rimLight.position.set(2, 7, -6);
     scene.add(rimLight);
 
     // Screen Glow Light (illuminates keyboard deck when lid opens)
@@ -131,108 +131,163 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     screenGlowLight.position.set(0, 1.3, -0.3);
     scene.add(screenGlowLight);
 
-    // 5. Materials (Apple Space Gray Aluminum Finish)
-    const spaceGrayMaterial = new THREE.MeshStandardMaterial({
-      color: 0x484b4f,
-      metalness: 0.82,
-      roughness: 0.28,
+    // 5. Materials (Exact Apple Silver Aluminum matching the Home page 3D MacBook)
+    const appleSilverMaterial = new THREE.MeshStandardMaterial({
+      color: 0xcdd1d5, // Bright satin silver aluminum
+      metalness: 0.76,
+      roughness: 0.36,
     });
 
     const darkTrimMaterial = new THREE.MeshStandardMaterial({
-      color: 0x16181a,
-      metalness: 0.2,
-      roughness: 0.8,
+      color: 0x141618,
+      metalness: 0.25,
+      roughness: 0.85,
     });
 
     const keyCapMaterial = new THREE.MeshStandardMaterial({
-      color: 0x1e2023,
-      metalness: 0.35,
-      roughness: 0.6,
+      color: 0x1c1e21, // Apple matte black chiclet keys
+      metalness: 0.3,
+      roughness: 0.65,
     });
 
     const trackpadMaterial = new THREE.MeshStandardMaterial({
-      color: 0x36393d,
-      metalness: 0.65,
-      roughness: 0.35,
+      color: 0xbac0c5, // Subtle frosted glass silver trackpad
+      metalness: 0.5,
+      roughness: 0.4,
     });
 
-    // 6. Laptop Base (Chassis)
+    // Helper: Rounded Rectangle Shape Generator
+    function createRoundedRectShape(w: number, d: number, r: number) {
+      const shape = new THREE.Shape();
+      const x = -w / 2;
+      const y = -d / 2;
+      shape.moveTo(x + r, y);
+      shape.lineTo(x + w - r, y);
+      shape.quadraticCurveTo(x + w, y, x + w, y + r);
+      shape.lineTo(x + w, y + d - r);
+      shape.quadraticCurveTo(x + w, y + d, x + w - r, y + d);
+      shape.lineTo(x + r, y + d);
+      shape.quadraticCurveTo(x, y + d, x, y + d - r);
+      shape.lineTo(x, y + r);
+      shape.quadraticCurveTo(x, y, x + r, y);
+      return shape;
+    }
+
+    // 6. Laptop Base (Chassis with Rounded Corners)
     const laptopGroup = new THREE.Group();
     scene.add(laptopGroup);
 
     const baseWidth = 3.2;
-    const baseHeight = 0.08;
-    const baseDepth = 2.1;
+    const baseDepth = 2.15;
+    const cornerRadius = 0.15;
+    const baseThickness = 0.065;
+    const baseBevel = 0.008;
 
-    // Base body box
-    const baseGeo = new THREE.BoxGeometry(baseWidth, baseHeight, baseDepth);
-    const baseMesh = new THREE.Mesh(baseGeo, spaceGrayMaterial);
-    baseMesh.position.set(0, baseHeight / 2, 0);
+    // Extruded rounded base unibody
+    const baseShape = createRoundedRectShape(
+      baseWidth - 2 * baseBevel,
+      baseDepth - 2 * baseBevel,
+      cornerRadius - baseBevel
+    );
+    const baseExtrudeSettings = {
+      depth: baseThickness,
+      bevelEnabled: true,
+      bevelSegments: 4,
+      steps: 1,
+      bevelSize: baseBevel,
+      bevelThickness: baseBevel,
+    };
+    const baseGeo = new THREE.ExtrudeGeometry(baseShape, baseExtrudeSettings);
+    // Rotate so shape lies in XZ plane and thickness extends along +Y
+    baseGeo.rotateX(-Math.PI / 2);
+    baseGeo.translate(0, baseBevel, 0);
+
+    const baseMesh = new THREE.Mesh(baseGeo, appleSilverMaterial);
     baseMesh.castShadow = true;
     baseMesh.receiveShadow = true;
     laptopGroup.add(baseMesh);
 
+    const totalBaseHeight = baseThickness + 2 * baseBevel; // ~0.081
+
     // Front opening thumb notch (groove at front edge)
-    const notchGeo = new THREE.BoxGeometry(0.55, 0.025, 0.03);
-    const notchMat = new THREE.MeshBasicMaterial({ color: 0x181a1c });
+    const notchGeo = new THREE.BoxGeometry(0.55, 0.02, 0.03);
+    const notchMat = new THREE.MeshBasicMaterial({ color: 0x9ca1a6 });
     const notchMesh = new THREE.Mesh(notchGeo, notchMat);
-    notchMesh.position.set(0, baseHeight - 0.012, baseDepth / 2 + 0.002);
+    notchMesh.position.set(0, totalBaseHeight - 0.01, baseDepth / 2 + 0.002);
     laptopGroup.add(notchMesh);
 
-    // Keyboard Well (recessed matte black tray)
-    const wellGeo = new THREE.BoxGeometry(2.8, 0.005, 1.25);
+    // Side Thunderbolt / USB-C oval ports (matching 2nd screenshot!)
+    const portGeo = new THREE.BoxGeometry(0.012, 0.016, 0.04);
+    const portMat = new THREE.MeshBasicMaterial({ color: 0x1c1e21 });
+    const port1 = new THREE.Mesh(portGeo, portMat);
+    port1.position.set(-baseWidth / 2 - 0.001, totalBaseHeight / 2, -0.45);
+    laptopGroup.add(port1);
+
+    const port2 = new THREE.Mesh(portGeo, portMat);
+    port2.position.set(-baseWidth / 2 - 0.001, totalBaseHeight / 2, -0.32);
+    laptopGroup.add(port2);
+
+    // Audio headphone jack dot
+    const jackGeo = new THREE.CylinderGeometry(0.009, 0.009, 0.01, 16);
+    jackGeo.rotateZ(Math.PI / 2);
+    const jackMesh = new THREE.Mesh(jackGeo, portMat);
+    jackMesh.position.set(-baseWidth / 2 - 0.001, totalBaseHeight / 2, -0.18);
+    laptopGroup.add(jackMesh);
+
+    // Keyboard Well (recessed matte black tray in the silver palm rest)
+    const wellGeo = new THREE.BoxGeometry(2.82, 0.004, 1.28);
     const wellMesh = new THREE.Mesh(wellGeo, darkTrimMaterial);
-    wellMesh.position.set(0, baseHeight + 0.001, -0.22);
+    wellMesh.position.set(0, totalBaseHeight + 0.001, -0.22);
     laptopGroup.add(wellMesh);
 
     // Chiclet Key deck
     const keyRows = 5;
     const keyCols = 14;
     const keyGroup = new THREE.Group();
-    keyGroup.position.set(-1.26, baseHeight + 0.008, -0.76);
+    keyGroup.position.set(-1.28, totalBaseHeight + 0.006, -0.78);
 
     for (let r = 0; r < keyRows; r++) {
       for (let c = 0; c < keyCols; c++) {
         const isSpacebar = r === 4 && c >= 4 && c <= 8;
         if (isSpacebar && c > 4) continue; // single wide spacebar
 
-        const kw = isSpacebar ? 1.05 : 0.16;
-        const kd = 0.16;
+        const kw = isSpacebar ? 1.08 : 0.165;
+        const kd = 0.165;
         const kGeo = new THREE.BoxGeometry(kw, 0.016, kd);
         const kMat = isSpacebar
           ? new THREE.MeshStandardMaterial({
               color: 0x223627,
               emissive: 0x39e900,
-              emissiveIntensity: 0.22,
+              emissiveIntensity: 0.25,
               roughness: 0.4,
             })
           : keyCapMaterial;
 
         const keyMesh = new THREE.Mesh(kGeo, kMat);
         keyMesh.position.set(
-          isSpacebar ? c * 0.195 + 0.42 : c * 0.195,
+          isSpacebar ? c * 0.198 + 0.42 : c * 0.198,
           0,
-          r * 0.245
+          r * 0.252
         );
         keyGroup.add(keyMesh);
       }
     }
     laptopGroup.add(keyGroup);
 
-    // Trackpad (centered in front half)
-    const trackpadGeo = new THREE.BoxGeometry(1.05, 0.005, 0.58);
+    // Glass Trackpad (centered in front half with hairline border)
+    const trackpadGeo = new THREE.BoxGeometry(1.08, 0.004, 0.60);
     const trackpadMesh = new THREE.Mesh(trackpadGeo, trackpadMaterial);
-    trackpadMesh.position.set(0, baseHeight + 0.002, 0.62);
+    trackpadMesh.position.set(0, totalBaseHeight + 0.002, 0.62);
     laptopGroup.add(trackpadMesh);
 
     // 7. Hinge & Lid Assembly
-    // Hinge is at the BACK edge: z = -baseDepth / 2, y = baseHeight
+    // Hinge is at the BACK edge of the laptop: z = -baseDepth / 2, y = totalBaseHeight
     const hingePivot = new THREE.Group();
-    hingePivot.position.set(0, baseHeight, -baseDepth / 2);
+    hingePivot.position.set(0, totalBaseHeight, -baseDepth / 2);
     laptopGroup.add(hingePivot);
 
-    // Hinge cylinder bar
-    const hingeGeo = new THREE.CylinderGeometry(0.035, 0.035, 2.0, 16);
+    // Hinge cylinder bar (matte dark trim)
+    const hingeGeo = new THREE.CylinderGeometry(0.035, 0.035, 2.1, 16);
     hingeGeo.rotateZ(Math.PI / 2);
     const hingeMesh = new THREE.Mesh(hingeGeo, darkTrimMaterial);
     hingeMesh.position.set(0, 0, 0);
@@ -242,16 +297,33 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     const lidGroup = new THREE.Group();
     hingePivot.add(lidGroup);
 
-    // Lid Casing (aluminum outer shell)
-    const lidThickness = 0.04;
-    const lidBackGeo = new THREE.BoxGeometry(baseWidth, lidThickness, baseDepth);
-    const lidBackMesh = new THREE.Mesh(lidBackGeo, spaceGrayMaterial);
-    // Extends forward from hinge (0 to baseDepth)
-    lidBackMesh.position.set(0, lidThickness / 2 + 0.008, baseDepth / 2);
-    lidBackMesh.castShadow = true;
-    lidGroup.add(lidBackMesh);
+    // Lid Casing: Rounded Extruded Shape (matching 2nd screenshot with curved top corners!)
+    const lidThickness = 0.032;
+    const lidBevel = 0.006;
+    const lidShape = createRoundedRectShape(
+      baseWidth - 2 * lidBevel,
+      baseDepth - 2 * lidBevel,
+      cornerRadius - lidBevel
+    );
+    const lidExtrudeSettings = {
+      depth: lidThickness,
+      bevelEnabled: true,
+      bevelSegments: 4,
+      steps: 1,
+      bevelSize: lidBevel,
+      bevelThickness: lidBevel,
+    };
+    const lidGeo = new THREE.ExtrudeGeometry(lidShape, lidExtrudeSettings);
+    lidGeo.rotateX(-Math.PI / 2);
+    lidGeo.translate(0, lidBevel, baseDepth / 2);
 
-    // 8. Outer Lid Logo (Faces UP when closed: +Y)
+    const lidMesh = new THREE.Mesh(lidGeo, appleSilverMaterial);
+    lidMesh.castShadow = true;
+    lidGroup.add(lidMesh);
+
+    const totalLidThickness = lidThickness + 2 * lidBevel; // ~0.044
+
+    // 8. Outer Lid Logo (GrowBroo Monogram on top of closed lid: +Y)
     const logoCanvas = document.createElement("canvas");
     logoCanvas.width = 1024;
     logoCanvas.height = 1024;
@@ -308,8 +380,7 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
       depthWrite: false,
     });
     const logoMesh = new THREE.Mesh(logoGeo, logoMat);
-    // Placed right on the top outer face of the lid
-    logoMesh.position.set(0, lidThickness + 0.01, baseDepth / 2);
+    logoMesh.position.set(0, totalLidThickness + 0.002, baseDepth / 2);
     lidGroup.add(logoMesh);
 
     // 9. Retina Display Screen Canvas (High Resolution 2048 x 1360)
@@ -456,6 +527,15 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     const screenTexture = new THREE.CanvasTexture(screenCanvas);
     screenTexture.generateMipmaps = true;
 
+    // Display Bezel with Rounded Top Corners (matching 2nd screenshot!)
+    const bezelShape = createRoundedRectShape(baseWidth - 0.10, baseDepth - 0.10, cornerRadius - 0.03);
+    const bezelGeo = new THREE.ShapeGeometry(bezelShape);
+    bezelGeo.rotateX(Math.PI / 2); // Faces -Y when closed, faces FORWARD when opened
+    const bezelMat = new THREE.MeshBasicMaterial({ color: 0x0c0e10 });
+    const bezelMesh = new THREE.Mesh(bezelGeo, bezelMat);
+    bezelMesh.position.set(0, -0.001, baseDepth / 2);
+    lidGroup.add(bezelMesh);
+
     // Inner Display Screen Plate: Faces DOWN toward keyboard when closed, faces FORWARD when opened
     const screenGeo = new THREE.PlaneGeometry(baseWidth - 0.22, baseDepth - 0.22);
     screenGeo.rotateX(Math.PI / 2); // Faces -Y when closed
@@ -469,24 +549,15 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
       metalness: 0.05,
     });
     const screenMesh = new THREE.Mesh(screenGeo, screenMaterial);
-    // Placed slightly below the inner face of lid casing (facing down toward keyboard)
-    screenMesh.position.set(0, 0.005, baseDepth / 2);
+    screenMesh.position.set(0, -0.002, baseDepth / 2);
     lidGroup.add(screenMesh);
-
-    // Inner Bezel (black frame around screen)
-    const bezelGeo = new THREE.PlaneGeometry(baseWidth - 0.04, baseDepth - 0.04);
-    bezelGeo.rotateX(Math.PI / 2);
-    const bezelMat = new THREE.MeshBasicMaterial({ color: 0x0c0e10 });
-    const bezelMesh = new THREE.Mesh(bezelGeo, bezelMat);
-    bezelMesh.position.set(0, 0.006, baseDepth / 2);
-    lidGroup.add(bezelMesh);
 
     // Webcam Dot (centered at top bezel near front lip)
     const camDotGeo = new THREE.CircleGeometry(0.016, 16);
     camDotGeo.rotateX(Math.PI / 2);
     const camDotMat = new THREE.MeshBasicMaterial({ color: 0x39e900 });
     const camDotMesh = new THREE.Mesh(camDotGeo, camDotMat);
-    camDotMesh.position.set(0, 0.004, baseDepth - 0.06);
+    camDotMesh.position.set(0, -0.003, baseDepth - 0.055);
     lidGroup.add(camDotMesh);
 
     // 10. Soft Studio Shadow on Desk (Directly under laptop chassis)
@@ -495,21 +566,21 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     shadowCanvas.height = 512;
     const shCtx = shadowCanvas.getContext("2d")!;
     const shGrad = shCtx.createRadialGradient(256, 256, 30, 256, 256, 235);
-    shGrad.addColorStop(0, "rgba(0, 0, 0, 0.55)");
-    shGrad.addColorStop(0.4, "rgba(0, 0, 0, 0.22)");
-    shGrad.addColorStop(0.85, "rgba(0, 0, 0, 0.04)");
+    shGrad.addColorStop(0, "rgba(0, 0, 0, 0.45)");
+    shGrad.addColorStop(0.4, "rgba(0, 0, 0, 0.18)");
+    shGrad.addColorStop(0.85, "rgba(0, 0, 0, 0.03)");
     shGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
     shCtx.fillStyle = shGrad;
     shCtx.fillRect(0, 0, 512, 512);
 
     const shadowTex = new THREE.CanvasTexture(shadowCanvas);
-    const shadowPlaneGeo = new THREE.PlaneGeometry(5.2, 4.0);
+    const shadowPlaneGeo = new THREE.PlaneGeometry(5.4, 4.2);
     shadowPlaneGeo.rotateX(-Math.PI / 2);
     const shadowPlaneMat = new THREE.MeshBasicMaterial({
       map: shadowTex,
       transparent: true,
       depthWrite: false,
-      opacity: 0.85,
+      opacity: 0.82,
     });
     const shadowMesh = new THREE.Mesh(shadowPlaneGeo, shadowPlaneMat);
     shadowMesh.position.set(0, -0.002, 0.1);
@@ -521,8 +592,8 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     // 11. Physics & Animation Setup
     // Opening angle: -106 degrees so front lip lifts UP and swings BACK toward hinge!
     const targetOpenAngle = -Math.PI * 0.59;
-    const baseAngleY = -0.25; // 3D perspective yaw
-    const baseAngleX = 0.12;  // 3D perspective pitch
+    const baseAngleY = -0.25; // 3/4 isometric perspective yaw matching home page laptop
+    const baseAngleX = 0.12;  // 3/4 isometric perspective pitch
     laptopGroup.rotation.y = baseAngleY;
     laptopGroup.rotation.x = baseAngleX;
 
@@ -587,7 +658,7 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
         laptopGroup.position.y = THREE.MathUtils.lerp(laptopGroup.position.y, 0, ease);
 
         // Dynamic screen emissive ramp up & glow
-        screenMaterial.emissiveIntensity = 0.06 + ease * 0.55;
+        screenMaterial.emissiveIntensity = 0.06 + ease * 0.88;
         screenGlowLight.intensity = ease * 2.5;
 
         if (t >= 1) {
