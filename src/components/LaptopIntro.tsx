@@ -8,94 +8,103 @@ interface LaptopIntroProps {
   onFinish: () => void;
 }
 
+// 0: Closed, 1: Half-Open, 2: Full-Open, 3: Zooming to Home, 4: Done
+type IntroStep = 0 | 1 | 2 | 3 | 4;
+
 export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
   const mountRef = useRef<HTMLDivElement>(null);
-  const [stage, setStage] = useState<"closed" | "opening" | "open" | "zooming" | "done">("closed");
-  const stageRef = useRef<"closed" | "opening" | "open" | "zooming" | "done">("closed");
+  const [step, setStep] = useState<IntroStep>(0);
+  const stepRef = useRef<IntroStep>(0);
 
-  // Keep ref in sync
+  // Sync ref
   useEffect(() => {
-    stageRef.current = stage;
-  }, [stage]);
+    stepRef.current = step;
+  }, [step]);
 
   // Lock body scroll during intro
   useEffect(() => {
-    if (stage !== "done") {
+    if (step !== 4) {
       const prevOverflow = document.body.style.overflow;
       document.body.style.overflow = "hidden";
       return () => {
         document.body.style.overflow = prevOverflow;
       };
     }
-  }, [stage]);
+  }, [step]);
 
-  const handleOpen = useCallback(() => {
-    if (stageRef.current === "closed") {
-      setStage("opening");
-    } else if (stageRef.current === "open") {
-      setStage("zooming");
+  // Step advancement handlers
+  const goToNextStep = useCallback(() => {
+    const current = stepRef.current;
+    if (current < 3) {
+      const next = (current + 1) as IntroStep;
+      setStep(next);
+      stepRef.current = next;
+    }
+  }, []);
+
+  const goToPrevStep = useCallback(() => {
+    const current = stepRef.current;
+    if (current > 0 && current < 3) {
+      const prev = (current - 1) as IntroStep;
+      setStep(prev);
+      stepRef.current = prev;
     }
   }, []);
 
   const handleSkip = useCallback(() => {
-    setStage("done");
+    setStep(4);
+    stepRef.current = 4;
     onFinish();
   }, [onFinish]);
 
-  // Keyboard controls: Enter / Space to open / enter, Esc to skip
+  // Keyboard navigation: Space / Enter advances step, Esc skips
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.key === "Enter" || e.key === " ") && (stageRef.current === "closed" || stageRef.current === "open")) {
+      if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        handleOpen();
+        goToNextStep();
       } else if (e.key === "Escape") {
         handleSkip();
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        goToPrevStep();
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        goToNextStep();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleOpen, handleSkip]);
+  }, [goToNextStep, goToPrevStep, handleSkip]);
 
-  // Scroll & Wheel controls: user halka scroll bhi kare to laptop open ho jaye
+  // Wheel Scroll Handling with cooldown: 1 scroll tick = 1 step
   useEffect(() => {
-    let touchStartY = 0;
+    let lastScrollTime = 0;
+    let scrollAcc = 0;
 
     const handleWheel = (e: WheelEvent) => {
-      if (Math.abs(e.deltaY) > 2 || Math.abs(e.deltaX) > 2) {
-        if (stageRef.current === "closed") {
-          setStage("opening");
-        } else if (stageRef.current === "open") {
-          setStage("zooming");
-        }
+      // Prevent browser bounce
+      e.preventDefault();
+      const now = performance.now();
+      if (now - lastScrollTime < 450) return; // 450ms cooldown prevents skipping multiple steps
+
+      scrollAcc += e.deltaY;
+      if (scrollAcc > 25) {
+        scrollAcc = 0;
+        lastScrollTime = now;
+        goToNextStep();
+      } else if (scrollAcc < -25) {
+        scrollAcc = 0;
+        lastScrollTime = now;
+        goToPrevStep();
       }
     };
 
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStartY = e.touches[0].clientY;
-    };
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    return () => window.removeEventListener("wheel", handleWheel);
+  }, [goToNextStep, goToPrevStep]);
 
-    const handleTouchMove = (e: TouchEvent) => {
-      const diffY = touchStartY - e.touches[0].clientY;
-      if (Math.abs(diffY) > 6) {
-        if (stageRef.current === "closed") {
-          setStage("opening");
-        } else if (stageRef.current === "open") {
-          setStage("zooming");
-        }
-      }
-    };
-
-    window.addEventListener("wheel", handleWheel, { passive: true });
-    window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    window.addEventListener("touchmove", handleTouchMove, { passive: true });
-
-    return () => {
-      window.removeEventListener("wheel", handleWheel);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchmove", handleTouchMove);
-    };
-  }, []);
-
+  // Three.js Scene Setup & Animation
   useEffect(() => {
     const container = mountRef.current;
     if (!container) return;
@@ -107,21 +116,19 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     const scene = new THREE.Scene();
     scene.background = new THREE.Color("#F6FAF6");
 
-    // 2. Camera setup with professional responsive distance calculation
+    // 2. Camera setup
     const fov = 34;
     const camera = new THREE.PerspectiveCamera(fov, width / height, 0.1, 100);
 
     const updateCameraDistance = () => {
       const aspect = width / height;
       const vFovRad = (fov * Math.PI) / 360;
-      // Generous framing so the open laptop (height 2.1) has ample padding above and below
       const targetWidth = 5.8;
       const targetHeight = 4.8;
       const distFromWidth = targetWidth / (2 * aspect * Math.tan(vFovRad));
       const distFromHeight = targetHeight / (2 * Math.tan(vFovRad));
       const dist = Math.max(distFromWidth, distFromHeight, 6.8);
 
-      // Elevated 3/4 studio perspective centered on the opened laptop height (Y = 0.65)
       camera.position.set(0, dist * 0.44, dist * 0.88);
       camera.lookAt(0, 0.65, 0);
     };
@@ -137,16 +144,15 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.18;
     container.appendChild(renderer.domElement);
 
-    // 4. Studio Lighting (Clean, neutral white for authentic Apple Silver aluminum)
+    // 4. Studio Lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.45);
     scene.add(ambientLight);
 
-    // Main Studio Key Light (soft white directional from top-right)
     const keyLight = new THREE.DirectionalLight(0xffffff, 2.4);
     keyLight.position.set(5, 9, 6);
     keyLight.castShadow = true;
@@ -157,24 +163,17 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     keyLight.shadow.bias = -0.0008;
     scene.add(keyLight);
 
-    // Fill Light (soft clean fill from top-left)
     const fillLight = new THREE.DirectionalLight(0xf1f5f9, 1.3);
     fillLight.position.set(-6, 6, 4);
     scene.add(fillLight);
 
-    // Specular Rim Light (creates crisp aluminum edge reflections along curved corners)
     const rimLight = new THREE.DirectionalLight(0xffffff, 1.8);
     rimLight.position.set(2, 7, -6);
     scene.add(rimLight);
 
-    // Screen Glow Light (illuminates keyboard deck when lid opens)
-    const screenGlowLight = new THREE.PointLight(0x39e900, 0, 5);
-    screenGlowLight.position.set(0, 1.3, -0.3);
-    scene.add(screenGlowLight);
-
-    // 5. Materials (Exact Apple Silver Aluminum matching the Home page 3D MacBook)
+    // 5. Materials
     const appleSilverMaterial = new THREE.MeshStandardMaterial({
-      color: 0xcdd1d5, // Bright satin silver aluminum
+      color: 0xcdd1d5,
       metalness: 0.76,
       roughness: 0.36,
     });
@@ -185,146 +184,142 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
       roughness: 0.85,
     });
 
-    const keyCapMaterial = new THREE.MeshStandardMaterial({
-      color: 0x1c1e21, // Apple matte black chiclet keys
-      metalness: 0.3,
-      roughness: 0.65,
+    const keyMaterial = new THREE.MeshStandardMaterial({
+      color: 0x18191b,
+      metalness: 0.15,
+      roughness: 0.78,
     });
 
     const trackpadMaterial = new THREE.MeshStandardMaterial({
-      color: 0xc8cdd2, // Matches Apple MacBook satin aluminum glass trackpad
-      metalness: 0.72,
-      roughness: 0.38,
+      color: 0xb5b9be,
+      metalness: 0.65,
+      roughness: 0.45,
     });
 
-    // Helper: Rounded Rectangle Shape Generator
-    function createRoundedRectShape(w: number, d: number, r: number) {
+    // Helper: Rounded Rectangle 2D Shape
+    function createRoundedRectShape(w: number, h: number, r: number) {
       const shape = new THREE.Shape();
-      const x = -w / 2;
-      const y = -d / 2;
-      shape.moveTo(x + r, y);
-      shape.lineTo(x + w - r, y);
-      shape.quadraticCurveTo(x + w, y, x + w, y + r);
-      shape.lineTo(x + w, y + d - r);
-      shape.quadraticCurveTo(x + w, y + d, x + w - r, y + d);
-      shape.lineTo(x + r, y + d);
-      shape.quadraticCurveTo(x, y + d, x, y + d - r);
-      shape.lineTo(x, y + r);
-      shape.quadraticCurveTo(x, y, x + r, y);
+      const x0 = -w / 2;
+      const y0 = -h / 2;
+      shape.moveTo(x0 + r, y0);
+      shape.lineTo(x0 + w - r, y0);
+      shape.quadraticCurveTo(x0 + w, y0, x0 + w, y0 + r);
+      shape.lineTo(x0 + w, y0 + h - r);
+      shape.quadraticCurveTo(x0 + w, y0 + h, x0 + w - r, y0 + h);
+      shape.lineTo(x0 + r, y0 + h);
+      shape.quadraticCurveTo(x0, y0 + h, x0, y0 + h - r);
+      shape.lineTo(x0, y0 + r);
+      shape.quadraticCurveTo(x0, y0, x0 + r, y0);
       return shape;
     }
 
-    // 6. Laptop Base (Chassis with Rounded Corners)
+    // 6. Laptop Base Assembly
     const laptopGroup = new THREE.Group();
     scene.add(laptopGroup);
 
     const baseWidth = 3.2;
-    const baseDepth = 2.15;
-    const cornerRadius = 0.15;
-    const baseThickness = 0.065;
-    const baseBevel = 0.008;
+    const baseDepth = 2.4;
+    const cornerRadius = 0.24;
+    const baseThickness = 0.088;
+    const bevel = 0.012;
 
-    // Extruded rounded base unibody
     const baseShape = createRoundedRectShape(
-      baseWidth - 2 * baseBevel,
-      baseDepth - 2 * baseBevel,
-      cornerRadius - baseBevel
+      baseWidth - 2 * bevel,
+      baseDepth - 2 * bevel,
+      cornerRadius - bevel
     );
     const baseExtrudeSettings = {
       depth: baseThickness,
       bevelEnabled: true,
       bevelSegments: 4,
       steps: 1,
-      bevelSize: baseBevel,
-      bevelThickness: baseBevel,
+      bevelSize: bevel,
+      bevelThickness: bevel,
     };
     const baseGeo = new THREE.ExtrudeGeometry(baseShape, baseExtrudeSettings);
-    // Rotate so shape lies in XZ plane and thickness extends along +Y
     baseGeo.rotateX(-Math.PI / 2);
-    baseGeo.translate(0, baseBevel, 0);
+    baseGeo.translate(0, bevel, 0);
 
     const baseMesh = new THREE.Mesh(baseGeo, appleSilverMaterial);
     baseMesh.castShadow = true;
     baseMesh.receiveShadow = true;
     laptopGroup.add(baseMesh);
 
-    const totalBaseHeight = baseThickness + 2 * baseBevel; // ~0.081
+    const totalBaseHeight = baseThickness + 2 * bevel;
 
-    // Front opening thumb notch (groove at front edge)
-    const notchGeo = new THREE.BoxGeometry(0.55, 0.02, 0.03);
-    const notchMat = new THREE.MeshBasicMaterial({ color: 0x9ca1a6 });
-    const notchMesh = new THREE.Mesh(notchGeo, notchMat);
-    notchMesh.position.set(0, totalBaseHeight - 0.01, baseDepth / 2 + 0.002);
-    laptopGroup.add(notchMesh);
+    // Keyboard Well
+    const kbWidth = 2.56;
+    const kbDepth = 1.08;
+    const kbWellShape = createRoundedRectShape(kbWidth, kbDepth, 0.06);
+    const kbWellGeo = new THREE.ShapeGeometry(kbWellShape);
+    kbWellGeo.rotateX(-Math.PI / 2);
+    const kbWellMesh = new THREE.Mesh(kbWellGeo, darkTrimMaterial);
+    kbWellMesh.position.set(0, totalBaseHeight + 0.0005, -0.42);
+    laptopGroup.add(kbWellMesh);
 
-    // Side Thunderbolt / USB-C oval ports (matching 2nd screenshot!)
-    const portGeo = new THREE.BoxGeometry(0.012, 0.016, 0.04);
-    const portMat = new THREE.MeshBasicMaterial({ color: 0x1c1e21 });
-    const port1 = new THREE.Mesh(portGeo, portMat);
-    port1.position.set(-baseWidth / 2 - 0.001, totalBaseHeight / 2, -0.45);
-    laptopGroup.add(port1);
-
-    const port2 = new THREE.Mesh(portGeo, portMat);
-    port2.position.set(-baseWidth / 2 - 0.001, totalBaseHeight / 2, -0.32);
-    laptopGroup.add(port2);
-
-    // Audio headphone jack dot
-    const jackGeo = new THREE.CylinderGeometry(0.009, 0.009, 0.01, 16);
-    jackGeo.rotateZ(Math.PI / 2);
-    const jackMesh = new THREE.Mesh(jackGeo, portMat);
-    jackMesh.position.set(-baseWidth / 2 - 0.001, totalBaseHeight / 2, -0.18);
-    laptopGroup.add(jackMesh);
-
-    // Keyboard Well (recessed matte black tray in the silver palm rest)
-    const wellGeo = new THREE.BoxGeometry(2.82, 0.004, 1.28);
-    const wellMesh = new THREE.Mesh(wellGeo, darkTrimMaterial);
-    wellMesh.position.set(0, totalBaseHeight + 0.001, -0.22);
-    laptopGroup.add(wellMesh);
-
-    // Chiclet Key deck (all keys unified in sleek Apple matte black)
+    // Keyboard Key Grid
     const keyRows = 5;
     const keyCols = 14;
-    const keyGroup = new THREE.Group();
-    keyGroup.position.set(-1.28, totalBaseHeight + 0.006, -0.78);
+    const keyGap = 0.016;
+    const keyH = 0.014;
+    const totalKeyAreaW = kbWidth - 0.08;
+    const totalKeyAreaD = kbDepth - 0.08;
+    const individualKeyW = (totalKeyAreaW - (keyCols - 1) * keyGap) / keyCols;
+    const individualKeyD = (totalKeyAreaD - (keyRows - 1) * keyGap) / keyRows;
+
+    const keyInstances = new THREE.InstancedMesh(
+      new THREE.BoxGeometry(individualKeyW, keyH, individualKeyD),
+      keyMaterial,
+      keyRows * keyCols
+    );
+    keyInstances.castShadow = true;
+
+    const dummy = new THREE.Object3D();
+    let keyIdx = 0;
+    const startX = -totalKeyAreaW / 2 + individualKeyW / 2;
+    const startZ = -0.42 - totalKeyAreaD / 2 + individualKeyD / 2;
 
     for (let r = 0; r < keyRows; r++) {
       for (let c = 0; c < keyCols; c++) {
-        const isSpacebar = r === 4 && c >= 4 && c <= 8;
-        if (isSpacebar && c > 4) continue; // single wide spacebar
+        const kx = startX + c * (individualKeyW + keyGap);
+        const kz = startZ + r * (individualKeyD + keyGap);
+        const ky = totalBaseHeight + keyH / 2 + 0.001;
 
-        const kw = isSpacebar ? 1.08 : 0.165;
-        const kd = 0.165;
-        const kGeo = new THREE.BoxGeometry(kw, 0.016, kd);
-        const keyMesh = new THREE.Mesh(kGeo, keyCapMaterial);
-        keyMesh.position.set(
-          isSpacebar ? c * 0.198 + 0.42 : c * 0.198,
-          0,
-          r * 0.252
-        );
-        keyGroup.add(keyMesh);
+        if (r === keyRows - 1 && c >= 4 && c <= 9) {
+          dummy.position.set(0, -999, 0);
+        } else {
+          dummy.position.set(kx, ky, kz);
+        }
+        dummy.updateMatrix();
+        keyInstances.setMatrixAt(keyIdx++, dummy.matrix);
       }
     }
-    laptopGroup.add(keyGroup);
+    laptopGroup.add(keyInstances);
 
-    // Apple Precision Glass Trackpad (rounded corners, subtle hairline perimeter gap)
-    const tpWidth = 1.12;
-    const tpDepth = 0.68;
-    const tpRadius = 0.035;
-
-    // Subtle recessed perimeter groove
-    const tpGrooveShape = createRoundedRectShape(
-      tpWidth + 0.012,
-      tpDepth + 0.012,
-      tpRadius + 0.006
+    // Spacebar Key
+    const spacebarW = individualKeyW * 6 + keyGap * 5;
+    const spacebarGeo = new THREE.BoxGeometry(spacebarW, keyH, individualKeyD);
+    const spacebarMesh = new THREE.Mesh(spacebarGeo, keyMaterial);
+    spacebarMesh.position.set(
+      0,
+      totalBaseHeight + keyH / 2 + 0.001,
+      startZ + (keyRows - 1) * (individualKeyD + keyGap)
     );
+    spacebarMesh.castShadow = true;
+    laptopGroup.add(spacebarMesh);
+
+    // Trackpad
+    const tpWidth = 1.05;
+    const tpDepth = 0.68;
+    const tpRadius = 0.04;
+
+    const tpGrooveShape = createRoundedRectShape(tpWidth + 0.012, tpDepth + 0.012, tpRadius + 0.006);
     const tpGrooveGeo = new THREE.ShapeGeometry(tpGrooveShape);
     tpGrooveGeo.rotateX(-Math.PI / 2);
-    const tpGrooveMat = new THREE.MeshBasicMaterial({ color: 0x9da3a9 });
-    const tpGrooveMesh = new THREE.Mesh(tpGrooveGeo, tpGrooveMat);
-    tpGrooveMesh.position.set(0, totalBaseHeight + 0.001, 0.60);
+    const tpGrooveMesh = new THREE.Mesh(tpGrooveGeo, darkTrimMaterial);
+    tpGrooveMesh.position.set(0, totalBaseHeight + 0.0008, 0.60);
     laptopGroup.add(tpGrooveMesh);
 
-    // Trackpad Surface (rounded rect matching Apple anodized finish)
     const tpShape = createRoundedRectShape(tpWidth, tpDepth, tpRadius);
     const tpGeo = new THREE.ShapeGeometry(tpShape);
     tpGeo.rotateX(-Math.PI / 2);
@@ -333,23 +328,20 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     laptopGroup.add(trackpadMesh);
 
     // 7. Hinge & Lid Assembly
-    // Hinge is at the BACK edge of the laptop: z = -baseDepth / 2, y = totalBaseHeight
     const hingePivot = new THREE.Group();
     hingePivot.position.set(0, totalBaseHeight, -baseDepth / 2);
     laptopGroup.add(hingePivot);
 
-    // Hinge cylinder bar (matte dark trim)
     const hingeGeo = new THREE.CylinderGeometry(0.035, 0.035, 2.1, 16);
     hingeGeo.rotateZ(Math.PI / 2);
     const hingeMesh = new THREE.Mesh(hingeGeo, darkTrimMaterial);
     hingeMesh.position.set(0, 0, 0);
     hingePivot.add(hingeMesh);
 
-    // Lid rotating group (anchored at hinge pivot 0, 0, 0)
     const lidGroup = new THREE.Group();
     hingePivot.add(lidGroup);
 
-    // Lid Casing: Rounded Extruded Shape (matching 2nd screenshot with curved top corners!)
+    // Lid Casing
     const lidThickness = 0.032;
     const lidBevel = 0.006;
     const lidShape = createRoundedRectShape(
@@ -373,9 +365,9 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     lidMesh.castShadow = true;
     lidGroup.add(lidMesh);
 
-    const totalLidThickness = lidThickness + 2 * lidBevel; // ~0.044
+    const totalLidThickness = lidThickness + 2 * lidBevel;
 
-    // 8. Outer Lid Logo (GrowBroo Official Logo on top of closed lid: +Y)
+    // 8. Outer Lid Logo (GrowBroo Official Logo on top of closed lid)
     const logoCanvas = document.createElement("canvas");
     logoCanvas.width = 1024;
     logoCanvas.height = 1024;
@@ -383,8 +375,6 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
 
     function renderLidLogo(img?: HTMLImageElement) {
       lCtx.clearRect(0, 0, 1024, 1024);
-
-      // Radiant emerald glow backdrop
       const radGlow = lCtx.createRadialGradient(512, 512, 20, 512, 512, 450);
       radGlow.addColorStop(0, "rgba(57, 233, 0, 0.45)");
       radGlow.addColorStop(0.35, "rgba(57, 233, 0, 0.15)");
@@ -410,7 +400,7 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
 
     const logoTexture = new THREE.CanvasTexture(logoCanvas);
     const logoGeo = new THREE.PlaneGeometry(1.25, 1.25);
-    logoGeo.rotateX(-Math.PI / 2); // Faces +Y (upward when closed)
+    logoGeo.rotateX(-Math.PI / 2);
     const logoMat = new THREE.MeshBasicMaterial({
       map: logoTexture,
       transparent: true,
@@ -420,7 +410,6 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     logoMesh.position.set(0, totalLidThickness + 0.002, baseDepth / 2);
     lidGroup.add(logoMesh);
 
-    // Load official GrowBroo light logo for outer lid
     const lidImg = new window.Image();
     lidImg.src = "/growbroo-logo-light.png";
     lidImg.onload = () => {
@@ -428,205 +417,299 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
       logoTexture.needsUpdate = true;
     };
 
-    // 9. Retina Display Screen Canvas (High Resolution 2048 x 1360 matching Hero MacBook)
+    // 9. Retina Display Screen Canvas with Animated Brand Reveal
     const screenCanvas = document.createElement("canvas");
     screenCanvas.width = 2048;
     screenCanvas.height = 1360;
     const sCtx = screenCanvas.getContext("2d")!;
 
-    function renderScreen(logoImg?: HTMLImageElement) {
-      // Exact Rich Forest Green Wallpaper from user screenshot (#0D4B2B center, #072616 edges)
+    let scrImg: HTMLImageElement | null = null;
+    let logoAnimStartTime: number | null = null;
+
+    function renderScreenFrame(progress: number, elapsedMs: number = 0) {
+      // 1. Deep forest green chalkboard wallpaper
       const sGrad = sCtx.createRadialGradient(1024, 680, 50, 1024, 680, 1200);
-      sGrad.addColorStop(0, "#0f5230");
-      sGrad.addColorStop(0.5, "#0b3d23");
-      sGrad.addColorStop(1, "#072616");
+      sGrad.addColorStop(0, "#0e3a20");
+      sGrad.addColorStop(0.5, "#0a2a17");
+      sGrad.addColorStop(1, "#05180d");
       sCtx.fillStyle = sGrad;
       sCtx.fillRect(0, 0, 2048, 1360);
 
-      // Subtle atmospheric grid
-      sCtx.strokeStyle = "rgba(57, 233, 0, 0.04)";
+      // Fine atmospheric grid texture
+      sCtx.strokeStyle = "rgba(57, 233, 0, 0.02)";
       sCtx.lineWidth = 1;
-      for (let x = 0; x < 2048; x += 90) {
+      for (let x = 0; x < 2048; x += 120) {
         sCtx.beginPath();
         sCtx.moveTo(x, 0);
         sCtx.lineTo(x, 1360);
         sCtx.stroke();
       }
-      for (let y = 0; y < 1360; y += 90) {
+      for (let y = 0; y < 1360; y += 120) {
         sCtx.beginPath();
         sCtx.moveTo(0, y);
         sCtx.lineTo(2048, y);
         sCtx.stroke();
       }
 
-      // Top Status Bar (macOS / GrowBroo Studio Bar)
-      sCtx.fillStyle = "rgba(7, 18, 11, 0.9)";
-      sCtx.fillRect(0, 0, 2048, 76);
-      sCtx.fillStyle = "#ffffff";
-      sCtx.font = "bold 28px sans-serif";
-      sCtx.textAlign = "left";
-      sCtx.fillText("GROWBROO OS 2.0  •  SCALE YOUR BUSINESS ONLINE", 50, 48);
+      if (!scrImg || !scrImg.complete) return;
 
-      // Status pill right
-      sCtx.fillStyle = "rgba(57, 233, 0, 0.15)";
-      sCtx.beginPath();
-      sCtx.roundRect(1620, 15, 380, 46, 23);
-      sCtx.fill();
-      sCtx.strokeStyle = "#39E900";
-      sCtx.lineWidth = 2;
-      sCtx.stroke();
+      // Significantly larger brand size: 1360px wide (was 920px)
+      const targetW = 1360;
+      const aspect = scrImg.width / scrImg.height;
+      const targetH = targetW / aspect;
+      const lx = (2048 - targetW) / 2;
+      const ly = (1360 - targetH) / 2 - 24;
 
-      sCtx.fillStyle = "#39E900";
-      sCtx.beginPath();
-      sCtx.arc(1650, 38, 7, 0, Math.PI * 2);
-      sCtx.fill();
+      // When closed or before full-open trigger:
+      if (progress <= 0) return;
 
-      sCtx.fillStyle = "#ffffff";
-      sCtx.font = "bold 22px monospace";
-      sCtx.fillText("STUDIO ENGINE 100%", 1675, 46);
+      // 2. Animated Ambient Energy Aura in center
+      const breathe = Math.sin(elapsedMs * 0.003) * 0.04;
+      const glowScale = Math.min(progress / 0.4, 1) + breathe;
+      const bgGlow = sCtx.createRadialGradient(1024, 680, 20, 1024, 680, 680 * Math.max(glowScale, 0.2));
+      bgGlow.addColorStop(0, "rgba(57, 233, 0, 0.35)");
+      bgGlow.addColorStop(0.4, "rgba(57, 233, 0, 0.16)");
+      bgGlow.addColorStop(0.75, "rgba(57, 233, 0, 0.04)");
+      bgGlow.addColorStop(1, "rgba(57, 233, 0, 0)");
+      sCtx.fillStyle = bgGlow;
+      sCtx.fillRect(0, 0, 2048, 1360);
 
-      // Floating Cloud/Spheres Cluster (matching Home Page Hero Laptop)
-      const spheres = [
-        { x: 1024, y: 640, r: 120 },
-        { x: 920, y: 620, r: 90 },
-        { x: 1130, y: 630, r: 95 },
-        { x: 840, y: 660, r: 75 },
-        { x: 1210, y: 650, r: 70 },
-        { x: 980, y: 560, r: 70 },
-        { x: 1080, y: 550, r: 65 },
-        { x: 960, y: 720, r: 60 },
-        { x: 1090, y: 710, r: 55 },
-      ];
+      // Subtle ambient glowing particles around the logo
+      const numParticles = 8;
+      for (let i = 0; i < numParticles; i++) {
+        const pAngle = (i / numParticles) * Math.PI * 2 + elapsedMs * 0.0008;
+        const pDist = 380 + Math.sin(elapsedMs * 0.002 + i) * 60;
+        const px = 1024 + Math.cos(pAngle) * pDist;
+        const py = 680 + Math.sin(pAngle) * (pDist * 0.5);
+        const pAlpha = (0.2 + 0.15 * Math.sin(elapsedMs * 0.003 + i)) * Math.min(progress * 2, 1);
 
-      spheres.forEach((s) => {
-        const sg = sCtx.createRadialGradient(
-          s.x - s.r * 0.3,
-          s.y - s.r * 0.3,
-          s.r * 0.1,
-          s.x,
-          s.y,
-          s.r
-        );
-        sg.addColorStop(0, "rgba(255, 255, 255, 0.95)");
-        sg.addColorStop(0.6, "rgba(225, 240, 230, 0.75)");
-        sg.addColorStop(1, "rgba(180, 210, 190, 0.1)");
-        sCtx.fillStyle = sg;
+        const pGrad = sCtx.createRadialGradient(px, py, 1, px, py, 18);
+        pGrad.addColorStop(0, `rgba(180, 255, 160, ${pAlpha})`);
+        pGrad.addColorStop(0.4, `rgba(57, 233, 0, ${pAlpha * 0.6})`);
+        pGrad.addColorStop(1, "rgba(57, 233, 0, 0)");
+        sCtx.fillStyle = pGrad;
         sCtx.beginPath();
-        sCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        sCtx.arc(px, py, 18, 0, Math.PI * 2);
         sCtx.fill();
-      });
-
-      // Prominent GrowBroo Logo in Center
-      if (logoImg && logoImg.complete) {
-        const targetW = 920;
-        const aspect = logoImg.width / logoImg.height;
-        const targetH = targetW / aspect;
-        const lx = (2048 - targetW) / 2;
-        const ly = 640 - targetH / 2;
-
-        // Soft backlight glow behind logo
-        const bgGlow = sCtx.createRadialGradient(1024, 640, 50, 1024, 640, 500);
-        bgGlow.addColorStop(0, "rgba(57, 233, 0, 0.3)");
-        bgGlow.addColorStop(1, "rgba(57, 233, 0, 0)");
-        sCtx.fillStyle = bgGlow;
-        sCtx.fillRect(0, 300, 2048, 700);
-
-        sCtx.drawImage(logoImg, lx, ly, targetW, targetH);
       }
 
-      // Feature Metric Cards at bottom
-      const cards = [
-        { label: "< 0.8s Load", sub: "Ultra-Fast Edge" },
-        { label: "High Growth", sub: "Engineered to Scale" },
-        { label: "100% Vitals", sub: "Production Grade" },
-      ];
+      // 3. Cinematic Laser-Writing Wipe Reveal
+      const wipe = Math.min(Math.max((progress - 0.05) / 0.70, 0), 1);
+      const smoothWipe = wipe * wipe * (3 - 2 * wipe);
 
-      cards.forEach((c, idx) => {
-        const cx = 564 + idx * 460;
-        const cy = 990;
-        sCtx.fillStyle = "rgba(255, 255, 255, 0.05)";
+      // Spring-like scale pop
+      const popScale = 0.95 + 0.05 * Math.sin(smoothWipe * Math.PI * 0.5);
+
+      sCtx.save();
+      // Clip to revealed portion
+      const clipWidth = lx + targetW * smoothWipe;
+      sCtx.beginPath();
+      sCtx.rect(0, 0, clipWidth, 1360);
+      sCtx.clip();
+
+      // Draw Logo
+      sCtx.save();
+      sCtx.translate(1024, ly + targetH / 2);
+      sCtx.scale(popScale, popScale);
+      sCtx.translate(-1024, -(ly + targetH / 2));
+      sCtx.globalAlpha = Math.min(progress * 2.5, 1);
+      sCtx.drawImage(scrImg, lx, ly, targetW, targetH);
+      sCtx.restore();
+
+      sCtx.restore();
+
+      // 4. Snake Enters Screen & Slithers Left-to-Right Writing Company Name
+      const headX = lx + targetW * smoothWipe;
+      const centerY = ly + targetH / 2;
+      const waveFreq = 16;
+      const waveAmp = 22;
+      const headY = centerY + Math.sin(smoothWipe * waveFreq) * waveAmp;
+
+      // Screen entry ripple effect on the left side where the 3D snake plunges in
+      if (smoothWipe < 0.22) {
+        const rippleScale = smoothWipe / 0.22;
+        const rippleRadius = rippleScale * 140;
+        const rippleAlpha = (1 - rippleScale) * 0.9;
+
+        // Outer green shockwave ring
+        sCtx.strokeStyle = `rgba(57, 233, 0, ${rippleAlpha})`;
+        sCtx.lineWidth = 4;
         sCtx.beginPath();
-        sCtx.roundRect(cx - 200, cy - 50, 400, 100, 20);
-        sCtx.fill();
-        sCtx.strokeStyle = "rgba(57, 233, 0, 0.35)";
-        sCtx.lineWidth = 1.5;
+        sCtx.arc(lx, centerY, rippleRadius, 0, Math.PI * 2);
         sCtx.stroke();
 
-        sCtx.fillStyle = "#39E900";
-        sCtx.font = "bold 34px sans-serif";
-        sCtx.textAlign = "center";
-        sCtx.fillText(c.label, cx, cy - 5);
-
-        sCtx.fillStyle = "rgba(255, 255, 255, 0.7)";
-        sCtx.font = "20px sans-serif";
-        sCtx.fillText(c.sub, cx, cy + 30);
-      });
-
-      // Bottom Dock
-      sCtx.fillStyle = "rgba(7, 16, 10, 0.88)";
-      sCtx.beginPath();
-      sCtx.roundRect(724, 1220, 600, 95, 32);
-      sCtx.fill();
-      sCtx.strokeStyle = "rgba(255, 255, 255, 0.12)";
-      sCtx.lineWidth = 1.5;
-      sCtx.stroke();
-
-      const apps = ["#006B21", "#39E900", "#ffffff", "#22c55e", "#10b981"];
-      apps.forEach((col, idx) => {
-        sCtx.fillStyle = col;
+        // Inner glowing core
+        const entryGlow = sCtx.createRadialGradient(lx, centerY, 2, lx, centerY, 50 * rippleScale);
+        entryGlow.addColorStop(0, `rgba(255, 255, 255, ${rippleAlpha})`);
+        entryGlow.addColorStop(0.4, `rgba(76, 255, 20, ${rippleAlpha * 0.8})`);
+        entryGlow.addColorStop(1, "rgba(57, 233, 0, 0)");
+        sCtx.fillStyle = entryGlow;
         sCtx.beginPath();
-        sCtx.roundRect(794 + idx * 105, 1240, 52, 52, 16);
+        sCtx.arc(lx, centerY, 50 * rippleScale, 0, Math.PI * 2);
         sCtx.fill();
-      });
+      }
+
+      // The 2D Neon Energy Snake slithering across screen from left to right writing company name
+      if (smoothWipe > 0.01 && smoothWipe < 0.99) {
+        const NUM_SNAKE_SEGS = 20;
+
+        // Draw snake body undulating from tail to head
+        for (let i = NUM_SNAKE_SEGS - 1; i >= 0; i--) {
+          const segRatio = i / (NUM_SNAKE_SEGS - 1);
+          const segX = headX - segRatio * 190;
+          if (segX < lx - 60) continue;
+
+          const segWave = Math.sin((smoothWipe - segRatio * 0.16) * waveFreq) * waveAmp;
+          const segY = centerY + segWave;
+          const segRadius = (1 - Math.pow(segRatio, 1.4) * 0.75) * 22;
+
+          const segGrad = sCtx.createRadialGradient(segX, segY, 1, segX, segY, segRadius);
+          if (i === 0) {
+            // Radiant Lime Head
+            segGrad.addColorStop(0, "rgba(255, 255, 255, 1)");
+            segGrad.addColorStop(0.3, "rgba(120, 255, 60, 0.95)");
+            segGrad.addColorStop(0.7, "rgba(57, 233, 0, 0.85)");
+            segGrad.addColorStop(1, "rgba(57, 233, 0, 0)");
+          } else {
+            // Emerald Body
+            const bodyAlpha = (1 - segRatio) * 0.88;
+            segGrad.addColorStop(0, `rgba(90, 255, 50, ${bodyAlpha})`);
+            segGrad.addColorStop(0.5, `rgba(57, 233, 0, ${bodyAlpha * 0.75})`);
+            segGrad.addColorStop(1, "rgba(57, 233, 0, 0)");
+          }
+
+          sCtx.fillStyle = segGrad;
+          sCtx.beginPath();
+          sCtx.arc(segX, segY, segRadius, 0, Math.PI * 2);
+          sCtx.fill();
+        }
+
+        // Head glowing halo flare
+        const headFlare = sCtx.createRadialGradient(headX, headY, 2, headX, headY, 65);
+        headFlare.addColorStop(0, "rgba(255, 255, 255, 1)");
+        headFlare.addColorStop(0.3, "rgba(76, 255, 20, 0.85)");
+        headFlare.addColorStop(0.7, "rgba(57, 233, 0, 0.4)");
+        headFlare.addColorStop(1, "rgba(57, 233, 0, 0)");
+        sCtx.fillStyle = headFlare;
+        sCtx.beginPath();
+        sCtx.arc(headX, headY, 65, 0, Math.PI * 2);
+        sCtx.fill();
+
+        // Electric sparks writing and illuminating letters as snake moves
+        for (let s = 0; s < 5; s++) {
+          const spX = headX - 10 + Math.cos(elapsedMs * 0.04 + s) * 22;
+          const spY = headY + Math.sin(elapsedMs * 0.04 + s) * 26;
+          sCtx.fillStyle = "#ffffff";
+          sCtx.beginPath();
+          sCtx.arc(spX, spY, 3, 0, Math.PI * 2);
+          sCtx.fill();
+        }
+      }
+
+      // 5. Specular Sheen / Glass Light Glint sweep (runs from progress 0.65 to 1.0)
+      const sheenStart = 0.65;
+      if (progress >= sheenStart) {
+        const sheenProgress = Math.min((progress - sheenStart) / 0.35, 1);
+        const sheenX = lx - 100 + (targetW + 300) * sheenProgress;
+
+        sCtx.save();
+        sCtx.beginPath();
+        sCtx.rect(lx, ly, targetW, targetH);
+        sCtx.clip();
+
+        const sheenGrad = sCtx.createLinearGradient(sheenX - 60, ly, sheenX + 60, ly + targetH);
+        sheenGrad.addColorStop(0, "rgba(255, 255, 255, 0)");
+        sheenGrad.addColorStop(0.4, "rgba(255, 255, 255, 0.15)");
+        sheenGrad.addColorStop(0.5, "rgba(255, 255, 255, 0.45)");
+        sheenGrad.addColorStop(0.6, "rgba(255, 255, 255, 0.15)");
+        sheenGrad.addColorStop(1, "rgba(255, 255, 255, 0)");
+
+        sCtx.fillStyle = sheenGrad;
+        sCtx.fillRect(sheenX - 120, ly - 20, 240, targetH + 40);
+        sCtx.restore();
+      }
+
+      // 6. High-Tech Emerald Energy Underline (progress 0.5 -> 1.0)
+      if (progress >= 0.5) {
+        const lineProgress = Math.min((progress - 0.5) / 0.45, 1);
+        const smoothLine = lineProgress * lineProgress * (3 - 2 * lineProgress);
+        const lineHalfW = (targetW * 0.42) * smoothLine;
+        const lineY = ly + targetH + 32;
+
+        const lineGrad = sCtx.createLinearGradient(1024 - lineHalfW, lineY, 1024 + lineHalfW, lineY);
+        lineGrad.addColorStop(0, "rgba(57, 233, 0, 0)");
+        lineGrad.addColorStop(0.2, "rgba(57, 233, 0, 0.5)");
+        lineGrad.addColorStop(0.5, "rgba(255, 255, 255, 0.95)");
+        lineGrad.addColorStop(0.8, "rgba(57, 233, 0, 0.5)");
+        lineGrad.addColorStop(1, "rgba(57, 233, 0, 0)");
+
+        sCtx.strokeStyle = lineGrad;
+        sCtx.lineWidth = 3;
+        sCtx.beginPath();
+        sCtx.moveTo(1024 - lineHalfW, lineY);
+        sCtx.lineTo(1024 + lineHalfW, lineY);
+        sCtx.stroke();
+
+        sCtx.fillStyle = "#39e900";
+        sCtx.beginPath();
+        sCtx.arc(1024 - lineHalfW, lineY, 2.5, 0, Math.PI * 2);
+        sCtx.arc(1024 + lineHalfW, lineY, 2.5, 0, Math.PI * 2);
+        sCtx.fill();
+      }
+
+      // 7. Full Reveal Completed State
+      if (progress >= 1) {
+        sCtx.globalAlpha = 1;
+        sCtx.drawImage(scrImg, lx, ly, targetW, targetH);
+      }
     }
 
-    renderScreen();
+    renderScreenFrame(0, 0);
 
     const screenTexture = new THREE.CanvasTexture(screenCanvas);
     screenTexture.generateMipmaps = true;
 
-    // Load official GrowBroo light logo for retina screen
-    const scrImg = new window.Image();
+    scrImg = new window.Image();
     scrImg.src = "/growbroo-logo-light.png";
     scrImg.onload = () => {
-      renderScreen(scrImg);
+      // If already at or past full open, render
+      if (stepRef.current >= 2) {
+        renderScreenFrame(1, 2000);
+      } else {
+        renderScreenFrame(0, 0);
+      }
       screenTexture.needsUpdate = true;
     };
 
-    // Display Bezel with Rounded Top Corners (matching 2nd screenshot!)
-    const bezelShape = createRoundedRectShape(baseWidth - 0.10, baseDepth - 0.10, cornerRadius - 0.03);
+    // Edge-to-Edge Black Bezel Glass (Authentic MacBook Pro bezel)
+    const bezelShape = createRoundedRectShape(baseWidth, baseDepth, cornerRadius);
     const bezelGeo = new THREE.ShapeGeometry(bezelShape);
-    bezelGeo.rotateX(Math.PI / 2); // Faces -Y when closed, faces FORWARD when opened
-    const bezelMat = new THREE.MeshBasicMaterial({ color: 0x0c0e10 });
+    bezelGeo.rotateX(Math.PI / 2);
+    const bezelMat = new THREE.MeshBasicMaterial({ color: 0x070809 });
     const bezelMesh = new THREE.Mesh(bezelGeo, bezelMat);
     bezelMesh.position.set(0, -0.001, baseDepth / 2);
     lidGroup.add(bezelMesh);
 
-    // Inner Display Screen Plate: Faces DOWN toward keyboard when closed, faces FORWARD when opened
-    const screenGeo = new THREE.PlaneGeometry(baseWidth - 0.22, baseDepth - 0.22);
-    screenGeo.rotateX(Math.PI / 2); // Faces -Y when closed
+    // Inner Display Screen Plate
+    const screenGeo = new THREE.PlaneGeometry(baseWidth - 0.16, baseDepth - 0.16);
+    screenGeo.rotateX(Math.PI / 2);
 
-    const screenMaterial = new THREE.MeshStandardMaterial({
+    const screenMaterial = new THREE.MeshBasicMaterial({
       map: screenTexture,
-      emissiveMap: screenTexture,
-      emissive: 0xffffff,
-      emissiveIntensity: 0.2, // Starts subtle, ramps to full OLED brightness on open
-      roughness: 0.1,
-      metalness: 0.05,
     });
     const screenMesh = new THREE.Mesh(screenGeo, screenMaterial);
     screenMesh.position.set(0, -0.002, baseDepth / 2);
     lidGroup.add(screenMesh);
 
-    // Webcam Dot (centered at top bezel near front lip)
-    const camDotGeo = new THREE.CircleGeometry(0.016, 16);
+    // Discreet Webcam Lens Dot
+    const camDotGeo = new THREE.CircleGeometry(0.012, 16);
     camDotGeo.rotateX(Math.PI / 2);
-    const camDotMat = new THREE.MeshBasicMaterial({ color: 0x39e900 });
+    const camDotMat = new THREE.MeshBasicMaterial({ color: 0x181c22 });
     const camDotMesh = new THREE.Mesh(camDotGeo, camDotMat);
-    camDotMesh.position.set(0, -0.003, baseDepth - 0.055);
+    camDotMesh.position.set(0, -0.003, baseDepth - 0.04);
     lidGroup.add(camDotMesh);
 
-    // 10. Soft Studio Shadow on Desk (Directly under laptop chassis)
+    // 10. Desk Studio Shadow
     const shadowCanvas = document.createElement("canvas");
     shadowCanvas.width = 512;
     shadowCanvas.height = 512;
@@ -652,33 +735,61 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     shadowMesh.position.set(0, -0.002, 0.1);
     scene.add(shadowMesh);
 
-    // Initial state: Lid is closed (rotation = 0)
+    // Initial state: Lid is closed
     lidGroup.rotation.x = 0;
 
-    // 11. Physics & Animation Setup
-    // Opening angle: -106 degrees so front lip lifts UP and swings BACK toward hinge!
-    const targetOpenAngle = -Math.PI * 0.59;
-    const baseAngleY = 0;    // Perfectly straight front-on view matching user screenshot
-    const baseAngleX = 0.08; // Subtle downward pitch so keyboard & trackpad are naturally visible
-    laptopGroup.rotation.y = baseAngleY;
-    laptopGroup.rotation.x = baseAngleX;
+    // 11. Interactive 360° Drag Rotation Setup
+    // User can click and drag to rotate the laptop freely 360 degrees in 3D!
+    let isDragging = false;
+    let dragDist = 0;
+    let lastPointerPos = { x: 0, y: 0 };
+    let pointerDownTime = 0;
 
-    let openStartTime: number | null = null;
-    let zoomStartTime: number | null = null;
-    let isFinishedCalled = false;
-    const initialCamPos = camera.position.clone();
+    let targetRotY = 0;      // Infinite 360° horizontal rotation
+    let targetRotX = 0.08;   // Vertical pitch tilt
+    let currentRotY = 0;
+    let currentRotX = 0.08;
 
-    // Mouse Parallax for subtle interactive feel
-    const targetRotation = { x: 0, y: 0 };
-    const onMouseMove = (e: MouseEvent) => {
-      const nx = (e.clientX / window.innerWidth - 0.5) * 2;
-      const ny = (e.clientY / window.innerHeight - 0.5) * 2;
-      targetRotation.y = nx * 0.06;
-      targetRotation.x = ny * 0.04;
+    const onPointerDown = (e: PointerEvent) => {
+      isDragging = true;
+      dragDist = 0;
+      lastPointerPos = { x: e.clientX, y: e.clientY };
+      pointerDownTime = performance.now();
+      container.style.cursor = "grabbing";
     };
-    window.addEventListener("mousemove", onMouseMove);
+
+    const onPointerMove = (e: PointerEvent) => {
+      if (!isDragging) return;
+      const dx = e.clientX - lastPointerPos.x;
+      const dy = e.clientY - lastPointerPos.y;
+      dragDist += Math.hypot(dx, dy);
+
+      // Full 360° rotation sensitivity
+      targetRotY += dx * 0.0085;
+      // Clamped vertical pitch so it doesn't flip upside down
+      targetRotX = Math.max(-0.35, Math.min(0.65, targetRotX + dy * 0.006));
+
+      lastPointerPos = { x: e.clientX, y: e.clientY };
+    };
+
+    const onPointerUp = () => {
+      if (!isDragging) return;
+      isDragging = false;
+      container.style.cursor = "grab";
+
+      // If drag distance was small and fast, treat as a click to advance step!
+      if (dragDist < 8 && performance.now() - pointerDownTime < 320) {
+        goToNextStep();
+      }
+    };
+
+    container.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointercancel", onPointerUp);
 
     // Resize Handler
+    const initialCamPos = camera.position.clone();
     const handleResize = () => {
       if (!container) return;
       width = container.clientWidth || window.innerWidth;
@@ -691,61 +802,326 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     };
     window.addEventListener("resize", handleResize);
 
-    // Animation Loop
+    // 12. 3D Volumetric Glowing Energy Snake Assembly (Whips from behind laptop and strikes screen)
+    const snakeGroup = new THREE.Group();
+    laptopGroup.add(snakeGroup);
+
+    // 3D Path: starts deep behind laptop hinge, loops wide around left, arcs over top-left, curves down, and dives directly into the LEFT EDGE of the screen!
+    const snakeCurve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-0.6, 0.3, -2.4),    // deep behind laptop base/lid
+      new THREE.Vector3(-2.4, 1.0, -1.8),    // swooping out from behind left
+      new THREE.Vector3(-2.8, 2.0, -0.6),    // rising along left edge of screen
+      new THREE.Vector3(-1.8, 3.1, 0.4),     // high arc over top-left of screen
+      new THREE.Vector3(0.3, 2.7, 0.7),      // slithering across front-top
+      new THREE.Vector3(1.3, 2.0, 0.45),     // looping down front-right
+      new THREE.Vector3(0.4, 1.4, 0.2),      // swooping back left towards screen left edge
+      new THREE.Vector3(-0.95, 1.25, -0.06), // DIRECT ENTRY into the LEFT side of the screen!
+    ]);
+
+    // Volumetric glowing body: 36 overlapping luminous spheres matching GrowBroo green theme
+    const SNAKE_BALLS = 36;
+    const snakeBalls: THREE.Mesh[] = [];
+    const snakeBallGroup = new THREE.Group();
+    snakeGroup.add(snakeBallGroup);
+
+    const ballGeo = new THREE.SphereGeometry(1, 12, 12);
+    for (let i = 0; i < SNAKE_BALLS; i++) {
+      const ballMat = new THREE.MeshBasicMaterial({
+        color: 0x39e900,
+        transparent: true,
+        opacity: 0.9,
+        blending: THREE.AdditiveBlending,
+      });
+      const bMesh = new THREE.Mesh(ballGeo, ballMat);
+      snakeBallGroup.add(bMesh);
+      snakeBalls.push(bMesh);
+    }
+
+    // Glowing head halo matching GrowBroo brand green
+    const haloGeo = new THREE.SphereGeometry(1, 16, 16);
+    const haloMat = new THREE.MeshBasicMaterial({
+      color: 0x39e900,
+      transparent: true,
+      opacity: 0.8,
+      blending: THREE.AdditiveBlending,
+    });
+    const snakeHalo = new THREE.Mesh(haloGeo, haloMat);
+    snakeGroup.add(snakeHalo);
+
+    // Dynamic light cast by snake onto laptop chassis & screen
+    const snakeLight = new THREE.PointLight(0x39e900, 0, 5.5);
+    snakeGroup.add(snakeLight);
+
+    // Sparks trailing behind snake
+    const NUM_SPARKS = 22;
+    const sparksPositions = new Float32Array(NUM_SPARKS * 3);
+    const sparksGeo = new THREE.BufferGeometry();
+    sparksGeo.setAttribute("position", new THREE.BufferAttribute(sparksPositions, 3));
+    const sparksMat = new THREE.PointsMaterial({
+      color: 0x39e900,
+      size: 0.055,
+      transparent: true,
+      opacity: 0.95,
+      blending: THREE.AdditiveBlending,
+    });
+    const sparksMesh = new THREE.Points(sparksGeo, sparksMat);
+    snakeGroup.add(sparksMesh);
+
+    snakeGroup.visible = false;
+
+    // Web Audio API Sound Synthesizer (Zero external file dependencies)
+    let audioCtx: AudioContext | null = null;
+    function getAudioContext() {
+      if (typeof window === "undefined") return null;
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        if (AudioContextClass) {
+          audioCtx = new AudioContextClass();
+        }
+      }
+      if (audioCtx && audioCtx.state === "suspended") {
+        audioCtx.resume().catch(() => {});
+      }
+      return audioCtx;
+    }
+
+    function playSnakeWhoosh(durationMs = 2600) {
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+        const dur = durationMs / 1000;
+
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(240, now);
+        osc.frequency.exponentialRampToValueAtTime(560, now + dur * 0.45);
+        osc.frequency.exponentialRampToValueAtTime(340, now + dur * 0.95);
+
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(900, now);
+
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.06, now + dur * 0.25);
+        gain.gain.linearRampToValueAtTime(0.08, now + dur * 0.55);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + dur + 0.1);
+      } catch {}
+    }
+
+    function playScreenImpact() {
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+
+        // Sub bass impact resonance
+        const subOsc = ctx.createOscillator();
+        const subGain = ctx.createGain();
+        subOsc.type = "sine";
+        subOsc.frequency.setValueAtTime(140, now);
+        subOsc.frequency.exponentialRampToValueAtTime(45, now + 0.65);
+
+        subGain.gain.setValueAtTime(0.12, now);
+        subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+
+        subOsc.connect(subGain);
+        subGain.connect(ctx.destination);
+        subOsc.start(now);
+        subOsc.stop(now + 0.75);
+
+        // Harmonic chime chord on logo reveal
+        const freqs = [523.25, 659.25, 783.99, 1046.50];
+        freqs.forEach((f, idx) => {
+          const cOsc = ctx.createOscillator();
+          const cGain = ctx.createGain();
+          cOsc.type = "triangle";
+          cOsc.frequency.setValueAtTime(f, now + idx * 0.08);
+
+          cGain.gain.setValueAtTime(0.001, now + idx * 0.08);
+          cGain.gain.linearRampToValueAtTime(0.045, now + idx * 0.08 + 0.02);
+          cGain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.85);
+
+          cOsc.connect(cGain);
+          cGain.connect(ctx.destination);
+          cOsc.start(now + idx * 0.08);
+          cOsc.stop(now + idx * 0.08 + 0.9);
+        });
+      } catch {}
+    }
+
+    // 13. Animation Loop & Multi-step Interpolation
     let animId: number;
     const clock = new THREE.Clock();
+
+    const maxFullOpenAngle = -Math.PI * 0.59; // ~106° full open
+    const halfOpenAngle = -Math.PI * 0.28;    // ~50° half open
+    let currentLidAngle = 0;
+
+    let zoomStartTime: number | null = null;
+    let isFinishedCalled = false;
+    let isSnakeSoundPlayed = false;
+    let isImpactSoundPlayed = false;
 
     function animate() {
       animId = requestAnimationFrame(animate);
       const elapsed = clock.getElapsedTime();
+      const currentStep = stepRef.current;
 
-      // Idle state: Subtle breathing floating motion facing straight forward
-      if (stageRef.current === "closed") {
-        laptopGroup.position.y = Math.sin(elapsed * 1.8) * 0.03;
-        shadowMesh.scale.setScalar(1 - Math.sin(elapsed * 1.8) * 0.03);
-        laptopGroup.rotation.y += (baseAngleY + targetRotation.y - laptopGroup.rotation.y) * 0.05;
-        laptopGroup.rotation.x += (baseAngleX + targetRotation.x - laptopGroup.rotation.x) * 0.05;
+      // 1. Calculate target lid angle based on step
+      let targetLidAngle = 0;
+      if (currentStep === 1) {
+        targetLidAngle = halfOpenAngle;
+      } else if (currentStep >= 2) {
+        targetLidAngle = maxFullOpenAngle;
       }
 
-      // Opening state: Front lip lifts UP from front and rotates backward around hinge
-      if (stageRef.current === "opening") {
-        if (!openStartTime) openStartTime = performance.now();
-        const duration = 1200; // 1.2s realistic opening
-        const t = Math.min((performance.now() - openStartTime) / duration, 1);
+      // Smooth lid rotation with spring-like cubic lerp
+      currentLidAngle += (targetLidAngle - currentLidAngle) * 0.075;
+      lidGroup.rotation.x = currentLidAngle;
 
-        // Smooth cubic ease-out
-        const ease = 1 - Math.pow(1 - t, 3);
-        // Negative rotation: front lip goes UP (+Y) and BACK (-Z)!
-        lidGroup.rotation.x = ease * targetOpenAngle;
+      // 2. 360° Cursor Rotation Smoothing
+      currentRotY += (targetRotY - currentRotY) * 0.12;
+      currentRotX += (targetRotX - currentRotX) * 0.12;
 
-        // Keep completely straight-on facing forward (symmetrical front view)
-        laptopGroup.rotation.y = THREE.MathUtils.lerp(baseAngleY, 0, ease);
-        laptopGroup.rotation.x = THREE.MathUtils.lerp(baseAngleX, 0.03, ease);
-        laptopGroup.position.y = THREE.MathUtils.lerp(laptopGroup.position.y, 0, ease);
+      // Subtle breathing float when not dragging
+      const floatY = !isDragging ? Math.sin(elapsed * 1.8) * 0.025 : 0;
+      laptopGroup.position.y = floatY;
+      shadowMesh.scale.setScalar(1 - floatY * 0.8);
 
-        // Dynamic screen emissive ramp up & glow
-        screenMaterial.emissiveIntensity = 0.06 + ease * 0.88;
-        screenGlowLight.intensity = ease * 2.5;
+      laptopGroup.rotation.y = currentRotY;
+      laptopGroup.rotation.x = currentRotX;
 
-        if (t >= 1) {
-          setStage("open");
-          // Hold open state so user can admire the opened laptop; clicks to enter or auto-advances after 20s
-          setTimeout(() => {
-            if (stageRef.current === "open") {
-              setStage("zooming");
+      // 3. 3D Snake Slither & Screen Writing Animation
+      if (currentStep >= 2) {
+        if (!logoAnimStartTime) {
+          logoAnimStartTime = performance.now();
+        }
+        const animElapsed = performance.now() - logoAnimStartTime;
+
+        // Smooth, slower, majestic flight (2600ms flight time matching GrowBroo theme)
+        const snakeDelay = 400;
+        const snakeDuration = 2600;
+        const snakeElapsed = animElapsed - snakeDelay;
+
+        if (snakeElapsed < 0) {
+          // Lid is opening, screen is waiting clean
+          snakeGroup.visible = false;
+          renderScreenFrame(0, animElapsed);
+          screenTexture.needsUpdate = true;
+        } else if (snakeElapsed < snakeDuration) {
+          // Play whoosh sound once
+          if (!isSnakeSoundPlayed) {
+            isSnakeSoundPlayed = true;
+            playSnakeWhoosh(snakeDuration);
+          }
+
+          // Snake is slithering in 3D around the opened laptop!
+          snakeGroup.visible = true;
+          const snakeProgress = snakeElapsed / snakeDuration;
+          const headU = Math.min(Math.pow(snakeProgress, 1.05), 1);
+
+          // Update each volumetric ball along the snake body in GrowBroo green palette
+          for (let i = 0; i < SNAKE_BALLS; i++) {
+            const segRatio = i / (SNAKE_BALLS - 1);
+            const u = Math.max(0, headU - segRatio * 0.35);
+            const pt = snakeCurve.getPointAt(Math.max(0, Math.min(u, 1)));
+            const b = snakeBalls[i];
+            b.position.copy(pt);
+
+            // Taper radius: Head is 0.085, body is 0.07, tail tapers to 0.015
+            const size = (1 - Math.pow(segRatio, 1.4) * 0.82) * 0.085;
+            b.scale.setScalar(size);
+
+            const mat = b.material as THREE.MeshBasicMaterial;
+            if (i === 0) {
+              mat.color.setHex(0x4cff14); // radiant GrowBroo lime-green core
+            } else if (i < 12) {
+              mat.color.setHex(0x39e900); // official GrowBroo green
+            } else if (i < 24) {
+              mat.color.setHex(0x28ba00); // deep emerald
+            } else {
+              mat.color.setHex(0x136a00); // forest green tail
             }
-          }, 20000);
+            mat.opacity = (1 - segRatio) * 0.95;
+          }
+
+          // Head position & halo
+          const headPos = snakeCurve.getPointAt(Math.max(0, Math.min(headU, 1)));
+          snakeHalo.position.copy(headPos);
+          snakeHalo.scale.setScalar(0.20 + Math.sin(animElapsed * 0.015) * 0.04);
+
+          // Dynamic green point light following head
+          snakeLight.position.copy(headPos);
+          snakeLight.intensity = 1.2 + headU * 4.5;
+
+          // Trailing spark particles
+          const sArr = sparksGeo.attributes.position.array as Float32Array;
+          for (let s = 0; s < NUM_SPARKS; s++) {
+            const su = Math.max(0, headU - (s / NUM_SPARKS) * 0.32);
+            const spt = snakeCurve.getPointAt(Math.max(0, su));
+            const offset = Math.sin(animElapsed * 0.008 + s) * 0.08;
+            sArr[s * 3] = spt.x + offset;
+            sArr[s * 3 + 1] = spt.y + offset * 0.7;
+            sArr[s * 3 + 2] = spt.z + offset * 0.5;
+          }
+          sparksGeo.attributes.position.needsUpdate = true;
+
+          // Screen displays clean background until snake strikes
+          renderScreenFrame(0, animElapsed);
+          screenTexture.needsUpdate = true;
+        } else {
+          // Play screen impact chime sound once
+          if (!isImpactSoundPlayed) {
+            isImpactSoundPlayed = true;
+            playScreenImpact();
+          }
+
+          // Snake plunges into screen!
+          snakeGroup.visible = false;
+          snakeLight.intensity = 0;
+
+          // Smooth brand writing animation on screen begins immediately
+          const writeElapsed = snakeElapsed - snakeDuration;
+          const writeDuration = 2000; // 2s smooth writing
+          const writeProgress = Math.min(writeElapsed / writeDuration, 1);
+
+          renderScreenFrame(writeProgress, animElapsed);
+          screenTexture.needsUpdate = true;
+        }
+      } else {
+        // Reset if user reversed step
+        logoAnimStartTime = null;
+        snakeGroup.visible = false;
+        snakeLight.intensity = 0;
+        isSnakeSoundPlayed = false;
+        isImpactSoundPlayed = false;
+        if (scrImg && scrImg.complete) {
+          renderScreenFrame(0, 0);
+          screenTexture.needsUpdate = true;
         }
       }
 
-      // Zooming state: Camera dives directly into the Retina screen
-      if (stageRef.current === "zooming") {
+      // 4. Step 3: Zooming to Home Page
+      if (currentStep === 3) {
         if (!zoomStartTime) zoomStartTime = performance.now();
         const zoomDuration = 850;
         const zt = Math.min((performance.now() - zoomStartTime) / zoomDuration, 1);
         const zEase = Math.pow(zt, 2.2);
 
-        // Target: Center of Retina Display facing straight forward
+        // Gently face straight forward as we dive in
+        targetRotY += (0 - targetRotY) * 0.15;
+        targetRotX += (0.02 - targetRotX) * 0.15;
+
         const targetCamPos = new THREE.Vector3(0, 1.25, -0.35);
         camera.position.lerpVectors(initialCamPos, targetCamPos, zEase);
 
@@ -759,7 +1135,8 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
 
         if (zt >= 1 && !isFinishedCalled) {
           isFinishedCalled = true;
-          setStage("done");
+          setStep(4);
+          stepRef.current = 4;
           onFinish();
         }
       }
@@ -771,26 +1148,28 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
 
     return () => {
       cancelAnimationFrame(animId);
-      window.removeEventListener("mousemove", onMouseMove);
+      container.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerUp);
       window.removeEventListener("resize", handleResize);
       renderer.dispose();
       if (renderer.domElement.parentElement === container) {
         container.removeChild(renderer.domElement);
       }
     };
-  }, [onFinish]);
+  }, [onFinish, goToNextStep]);
 
-  if (stage === "done") return null;
+  if (step === 4) return null;
 
   return (
     <div
       ref={mountRef}
-      onClick={handleOpen}
-      className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden cursor-pointer select-none transition-opacity duration-300 bg-[#F6FAF6]"
-      style={{ touchAction: "manipulation" }}
+      className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden select-none transition-opacity duration-300 bg-[#F6FAF6] cursor-grab"
+      style={{ touchAction: "none" }}
       aria-label="Interactive 3D Laptop Experience"
     >
-      {/* Top Branding */}
+      {/* Top Branding & Skip Action */}
       <div className="absolute top-0 left-0 right-0 p-4 sm:p-6 flex items-center justify-between pointer-events-none z-10">
         <Image
           src="/growbroo-logo.png"
@@ -800,6 +1179,26 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
           className="h-8 sm:h-9 w-auto object-contain"
           priority
         />
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleSkip();
+          }}
+          className="pointer-events-auto px-4 py-1.5 rounded-full bg-black/5 hover:bg-black/10 border border-black/10 text-xs sm:text-sm font-medium text-neutral-700 hover:text-black transition-all flex items-center gap-1.5 backdrop-blur-sm shadow-sm"
+        >
+          Skip Intro
+          <span className="text-sm">→</span>
+        </button>
+      </div>
+
+      {/* Bottom Professional Welcome & Quote */}
+      <div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center text-center px-4 max-w-xl pointer-events-none z-10 transition-all duration-500">
+        <h3 className="text-sm sm:text-base md:text-lg font-semibold tracking-tight text-neutral-900 leading-snug">
+          “Big Ideas. Built for Real Growth.”
+        </h3>
+        <p className="text-xs sm:text-sm text-neutral-500 mt-1 font-normal tracking-wide">
+          Welcome to the future of high-velocity web engineering & scale.
+        </p>
       </div>
     </div>
   );

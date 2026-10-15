@@ -106,10 +106,10 @@ export default function Footer() {
                   Email
                 </span>
                 <a
-                  href="mailto:hello@verdantdigital.com"
+                  href="mailto:growbroo.info@gmail.com"
                   className="font-medium text-white hover:text-[#39E900] transition-colors"
                 >
-                  hello@verdantdigital.com
+                  growbroo.info@gmail.com
                 </a>
               </p>
               <p>
