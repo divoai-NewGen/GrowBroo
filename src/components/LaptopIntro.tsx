@@ -435,11 +435,11 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     const sCtx = screenCanvas.getContext("2d")!;
 
     function renderScreen(logoImg?: HTMLImageElement) {
-      // Authentic Forest Green Wallpaper Gradient (matching Home Hero Laptop)
-      const sGrad = sCtx.createRadialGradient(1024, 680, 100, 1024, 680, 1100);
-      sGrad.addColorStop(0, "#0e2918");
-      sGrad.addColorStop(0.6, "#0a1e12");
-      sGrad.addColorStop(1, "#051109");
+      // Exact Rich Forest Green Wallpaper from user screenshot (#0D4B2B center, #072616 edges)
+      const sGrad = sCtx.createRadialGradient(1024, 680, 50, 1024, 680, 1200);
+      sGrad.addColorStop(0, "#0f5230");
+      sGrad.addColorStop(0.5, "#0b3d23");
+      sGrad.addColorStop(1, "#072616");
       sCtx.fillStyle = sGrad;
       sCtx.fillRect(0, 0, 2048, 1360);
 
@@ -658,8 +658,8 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     // 11. Physics & Animation Setup
     // Opening angle: -106 degrees so front lip lifts UP and swings BACK toward hinge!
     const targetOpenAngle = -Math.PI * 0.59;
-    const baseAngleY = -0.40; // 3/4 isometric perspective matching home page hero laptop
-    const baseAngleX = 0.10;  // 3/4 isometric perspective pitch
+    const baseAngleY = 0;    // Perfectly straight front-on view matching user screenshot
+    const baseAngleX = 0.08; // Subtle downward pitch so keyboard & trackpad are naturally visible
     laptopGroup.rotation.y = baseAngleY;
     laptopGroup.rotation.x = baseAngleX;
 
@@ -673,8 +673,8 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     const onMouseMove = (e: MouseEvent) => {
       const nx = (e.clientX / window.innerWidth - 0.5) * 2;
       const ny = (e.clientY / window.innerHeight - 0.5) * 2;
-      targetRotation.y = nx * 0.08;
-      targetRotation.x = ny * 0.05;
+      targetRotation.y = nx * 0.06;
+      targetRotation.x = ny * 0.04;
     };
     window.addEventListener("mousemove", onMouseMove);
 
@@ -699,7 +699,7 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
       animId = requestAnimationFrame(animate);
       const elapsed = clock.getElapsedTime();
 
-      // Idle state: Subtle breathing floating motion at 3/4 perspective
+      // Idle state: Subtle breathing floating motion facing straight forward
       if (stageRef.current === "closed") {
         laptopGroup.position.y = Math.sin(elapsed * 1.8) * 0.03;
         shadowMesh.scale.setScalar(1 - Math.sin(elapsed * 1.8) * 0.03);
@@ -718,9 +718,9 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
         // Negative rotation: front lip goes UP (+Y) and BACK (-Z)!
         lidGroup.rotation.x = ease * targetOpenAngle;
 
-        // Preserve 3/4 perspective matching home page hero laptop
-        laptopGroup.rotation.y = THREE.MathUtils.lerp(baseAngleY, -0.34, ease);
-        laptopGroup.rotation.x = THREE.MathUtils.lerp(baseAngleX, 0.08, ease);
+        // Keep completely straight-on facing forward (symmetrical front view)
+        laptopGroup.rotation.y = THREE.MathUtils.lerp(baseAngleY, 0, ease);
+        laptopGroup.rotation.x = THREE.MathUtils.lerp(baseAngleX, 0.03, ease);
         laptopGroup.position.y = THREE.MathUtils.lerp(laptopGroup.position.y, 0, ease);
 
         // Dynamic screen emissive ramp up & glow
@@ -745,12 +745,12 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
         const zt = Math.min((performance.now() - zoomStartTime) / zoomDuration, 1);
         const zEase = Math.pow(zt, 2.2);
 
-        // Target: Center of Retina Display in 3/4 perspective
-        const targetCamPos = new THREE.Vector3(Math.sin(-0.34) * 0.6, 1.22, -0.2);
+        // Target: Center of Retina Display facing straight forward
+        const targetCamPos = new THREE.Vector3(0, 1.25, -0.35);
         camera.position.lerpVectors(initialCamPos, targetCamPos, zEase);
 
         const initialLookAt = new THREE.Vector3(0, 0.65, 0);
-        const targetLookAt = new THREE.Vector3(Math.sin(-0.34) * 0.3, 1.18, -0.85);
+        const targetLookAt = new THREE.Vector3(0, 1.18, -1.0);
         camera.lookAt(new THREE.Vector3().lerpVectors(initialLookAt, targetLookAt, zEase));
 
         if (container) {
