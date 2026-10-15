@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 const navLinks = [
@@ -34,21 +35,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-12 border-b border-white/10">
           {/* Brand Info (4 cols) */}
           <div className="lg:col-span-4 space-y-4">
-            <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-2xl bg-[#006B21] text-[#39E900] flex items-center justify-center font-black">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M12 2L3 8V16L12 22L21 16V8L12 2Z"
-                    stroke="#39E900"
-                    strokeWidth="2.5"
-                    strokeLinejoin="round"
-                  />
-                  <circle cx="12" cy="12" r="3" fill="#39E900" />
-                </svg>
-              </div>
-              <span className="text-xl font-bold tracking-tight text-white">
-                Verdant<span className="text-[#39E900]">.</span>
-              </span>
+            <Link href="/" className="inline-block group focus:outline-none">
+              <Image
+                src="/growbroo-logo-light.png"
+                alt="GrowBroo - Scale Your Business Online"
+                width={190}
+                height={58}
+                className="h-10 sm:h-11 w-auto object-contain transition-transform duration-200 group-hover:scale-[1.03]"
+              />
             </Link>
 
             <p className="text-sm text-white/70 leading-relaxed max-w-sm">
@@ -141,7 +135,7 @@ export default function Footer() {
 
         {/* Bottom Bar: Copyright & Terms */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-white/50 gap-4">
-          <p>© {new Date().getFullYear()} Verdant Digital Agency Inc. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} GrowBroo. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <span className="hover:text-white transition-colors cursor-pointer">
               Privacy Policy

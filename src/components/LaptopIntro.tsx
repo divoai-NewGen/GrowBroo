@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
+import Image from "next/image";
 import * as THREE from "three";
 
 interface LaptopIntroProps {
@@ -374,56 +375,41 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
 
     const totalLidThickness = lidThickness + 2 * lidBevel; // ~0.044
 
-    // 8. Outer Lid Logo (GrowBroo Monogram on top of closed lid: +Y)
+    // 8. Outer Lid Logo (GrowBroo Official Logo on top of closed lid: +Y)
     const logoCanvas = document.createElement("canvas");
     logoCanvas.width = 1024;
     logoCanvas.height = 1024;
     const lCtx = logoCanvas.getContext("2d")!;
-    lCtx.clearRect(0, 0, 1024, 1024);
 
-    // Radiant emerald glow backdrop
-    const radGlow = lCtx.createRadialGradient(512, 512, 50, 512, 512, 420);
-    radGlow.addColorStop(0, "rgba(57, 233, 0, 0.5)");
-    radGlow.addColorStop(0.5, "rgba(57, 233, 0, 0.15)");
-    radGlow.addColorStop(1, "rgba(57, 233, 0, 0)");
-    lCtx.fillStyle = radGlow;
-    lCtx.fillRect(0, 0, 1024, 1024);
+    function renderLidLogo(img?: HTMLImageElement) {
+      lCtx.clearRect(0, 0, 1024, 1024);
 
-    // Hexagon Emblem
-    lCtx.save();
-    lCtx.translate(512, 450);
-    lCtx.fillStyle = "#006B21";
-    lCtx.beginPath();
-    lCtx.roundRect(-130, -130, 260, 260, 64);
-    lCtx.fill();
-    lCtx.lineWidth = 10;
-    lCtx.strokeStyle = "#39E900";
-    lCtx.stroke();
+      // Radiant emerald glow backdrop
+      const radGlow = lCtx.createRadialGradient(512, 512, 20, 512, 512, 450);
+      radGlow.addColorStop(0, "rgba(57, 233, 0, 0.45)");
+      radGlow.addColorStop(0.35, "rgba(57, 233, 0, 0.15)");
+      radGlow.addColorStop(1, "rgba(57, 233, 0, 0)");
+      lCtx.fillStyle = radGlow;
+      lCtx.fillRect(0, 0, 1024, 1024);
 
-    lCtx.beginPath();
-    const lr = 76;
-    for (let i = 0; i < 6; i++) {
-      const a = (i * Math.PI) / 3;
-      const x = lr * Math.cos(a);
-      const y = lr * Math.sin(a);
-      if (i === 0) lCtx.moveTo(x, y);
-      else lCtx.lineTo(x, y);
+      if (img && img.complete) {
+        const aspect = img.width / img.height;
+        const targetW = 660;
+        const targetH = targetW / aspect;
+        lCtx.drawImage(
+          img,
+          (1024 - targetW) / 2,
+          (1024 - targetH) / 2,
+          targetW,
+          targetH
+        );
+      }
     }
-    lCtx.closePath();
-    lCtx.fillStyle = "rgba(57, 233, 0, 0.45)";
-    lCtx.fill();
-    lCtx.lineWidth = 6;
-    lCtx.stroke();
-    lCtx.restore();
 
-    // Wordmark
-    lCtx.fillStyle = "#ffffff";
-    lCtx.font = "bold 64px sans-serif";
-    lCtx.textAlign = "center";
-    lCtx.fillText("GrowBroo.", 512, 700);
+    renderLidLogo();
 
     const logoTexture = new THREE.CanvasTexture(logoCanvas);
-    const logoGeo = new THREE.PlaneGeometry(1.2, 1.2);
+    const logoGeo = new THREE.PlaneGeometry(1.25, 1.25);
     logoGeo.rotateX(-Math.PI / 2); // Faces +Y (upward when closed)
     const logoMat = new THREE.MeshBasicMaterial({
       map: logoTexture,
@@ -434,49 +420,57 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     logoMesh.position.set(0, totalLidThickness + 0.002, baseDepth / 2);
     lidGroup.add(logoMesh);
 
-    // 9. Retina Display Screen Canvas (High Resolution 2048 x 1360)
+    // Load official GrowBroo light logo for outer lid
+    const lidImg = new window.Image();
+    lidImg.src = "/growbroo-logo-light.png";
+    lidImg.onload = () => {
+      renderLidLogo(lidImg);
+      logoTexture.needsUpdate = true;
+    };
+
+    // 9. Retina Display Screen Canvas (High Resolution 2048 x 1360 matching Hero MacBook)
     const screenCanvas = document.createElement("canvas");
     screenCanvas.width = 2048;
     screenCanvas.height = 1360;
     const sCtx = screenCanvas.getContext("2d")!;
 
-    function renderScreen() {
-      // Sleek Dark Mode Background
-      const sGrad = sCtx.createLinearGradient(0, 0, 2048, 1360);
-      sGrad.addColorStop(0, "#080c09");
-      sGrad.addColorStop(0.5, "#0d1710");
-      sGrad.addColorStop(1, "#070c08");
+    function renderScreen(logoImg?: HTMLImageElement) {
+      // Authentic Forest Green Wallpaper Gradient (matching Home Hero Laptop)
+      const sGrad = sCtx.createRadialGradient(1024, 680, 100, 1024, 680, 1100);
+      sGrad.addColorStop(0, "#0e2918");
+      sGrad.addColorStop(0.6, "#0a1e12");
+      sGrad.addColorStop(1, "#051109");
       sCtx.fillStyle = sGrad;
       sCtx.fillRect(0, 0, 2048, 1360);
 
-      // Subtle geometric grid
-      sCtx.strokeStyle = "rgba(57, 233, 0, 0.06)";
+      // Subtle atmospheric grid
+      sCtx.strokeStyle = "rgba(57, 233, 0, 0.04)";
       sCtx.lineWidth = 1;
-      for (let x = 0; x < 2048; x += 80) {
+      for (let x = 0; x < 2048; x += 90) {
         sCtx.beginPath();
         sCtx.moveTo(x, 0);
         sCtx.lineTo(x, 1360);
         sCtx.stroke();
       }
-      for (let y = 0; y < 1360; y += 80) {
+      for (let y = 0; y < 1360; y += 90) {
         sCtx.beginPath();
         sCtx.moveTo(0, y);
         sCtx.lineTo(2048, y);
         sCtx.stroke();
       }
 
-      // Top Status Bar (macOS / Studio Bar)
-      sCtx.fillStyle = "rgba(10, 15, 11, 0.9)";
-      sCtx.fillRect(0, 0, 2048, 80);
+      // Top Status Bar (macOS / GrowBroo Studio Bar)
+      sCtx.fillStyle = "rgba(7, 18, 11, 0.9)";
+      sCtx.fillRect(0, 0, 2048, 76);
       sCtx.fillStyle = "#ffffff";
-      sCtx.font = "bold 32px sans-serif";
+      sCtx.font = "bold 28px sans-serif";
       sCtx.textAlign = "left";
-      sCtx.fillText("GROWBROO OS 2.0  •  VERDANT DIGITAL", 50, 52);
+      sCtx.fillText("GROWBROO OS 2.0  •  SCALE YOUR BUSINESS ONLINE", 50, 48);
 
       // Status pill right
       sCtx.fillStyle = "rgba(57, 233, 0, 0.15)";
       sCtx.beginPath();
-      sCtx.roundRect(1620, 18, 380, 46, 23);
+      sCtx.roundRect(1620, 15, 380, 46, 23);
       sCtx.fill();
       sCtx.strokeStyle = "#39E900";
       sCtx.lineWidth = 2;
@@ -484,91 +478,104 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
 
       sCtx.fillStyle = "#39E900";
       sCtx.beginPath();
-      sCtx.arc(1650, 41, 7, 0, Math.PI * 2);
+      sCtx.arc(1650, 38, 7, 0, Math.PI * 2);
       sCtx.fill();
 
       sCtx.fillStyle = "#ffffff";
-      sCtx.font = "bold 24px monospace";
-      sCtx.fillText("SYSTEM 100% OPERATIONAL", 1675, 49);
+      sCtx.font = "bold 22px monospace";
+      sCtx.fillText("STUDIO ENGINE 100%", 1675, 46);
 
-      // Hero Center Section: Hexagon Brand Icon
-      sCtx.save();
-      sCtx.translate(1024, 480);
-      sCtx.fillStyle = "#006B21";
-      sCtx.beginPath();
-      sCtx.roundRect(-100, -100, 200, 200, 48);
-      sCtx.fill();
-      sCtx.lineWidth = 6;
-      sCtx.strokeStyle = "#39E900";
-      sCtx.stroke();
+      // Floating Cloud/Spheres Cluster (matching Home Page Hero Laptop)
+      const spheres = [
+        { x: 1024, y: 640, r: 120 },
+        { x: 920, y: 620, r: 90 },
+        { x: 1130, y: 630, r: 95 },
+        { x: 840, y: 660, r: 75 },
+        { x: 1210, y: 650, r: 70 },
+        { x: 980, y: 560, r: 70 },
+        { x: 1080, y: 550, r: 65 },
+        { x: 960, y: 720, r: 60 },
+        { x: 1090, y: 710, r: 55 },
+      ];
 
-      sCtx.beginPath();
-      const hr = 60;
-      for (let i = 0; i < 6; i++) {
-        const a = (i * Math.PI) / 3;
-        const x = hr * Math.cos(a);
-        const y = hr * Math.sin(a);
-        if (i === 0) sCtx.moveTo(x, y);
-        else sCtx.lineTo(x, y);
+      spheres.forEach((s) => {
+        const sg = sCtx.createRadialGradient(
+          s.x - s.r * 0.3,
+          s.y - s.r * 0.3,
+          s.r * 0.1,
+          s.x,
+          s.y,
+          s.r
+        );
+        sg.addColorStop(0, "rgba(255, 255, 255, 0.95)");
+        sg.addColorStop(0.6, "rgba(225, 240, 230, 0.75)");
+        sg.addColorStop(1, "rgba(180, 210, 190, 0.1)");
+        sCtx.fillStyle = sg;
+        sCtx.beginPath();
+        sCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        sCtx.fill();
+      });
+
+      // Prominent GrowBroo Logo in Center
+      if (logoImg && logoImg.complete) {
+        const targetW = 920;
+        const aspect = logoImg.width / logoImg.height;
+        const targetH = targetW / aspect;
+        const lx = (2048 - targetW) / 2;
+        const ly = 640 - targetH / 2;
+
+        // Soft backlight glow behind logo
+        const bgGlow = sCtx.createRadialGradient(1024, 640, 50, 1024, 640, 500);
+        bgGlow.addColorStop(0, "rgba(57, 233, 0, 0.3)");
+        bgGlow.addColorStop(1, "rgba(57, 233, 0, 0)");
+        sCtx.fillStyle = bgGlow;
+        sCtx.fillRect(0, 300, 2048, 700);
+
+        sCtx.drawImage(logoImg, lx, ly, targetW, targetH);
       }
-      sCtx.closePath();
-      sCtx.fillStyle = "rgba(57, 233, 0, 0.4)";
-      sCtx.fill();
-      sCtx.lineWidth = 5;
-      sCtx.stroke();
-      sCtx.restore();
 
-      // Main Headline
-      sCtx.textAlign = "center";
-      sCtx.fillStyle = "#ffffff";
-      sCtx.font = "bold 82px sans-serif";
-      sCtx.fillText("Verdant. Digital Studio", 1024, 720);
-
-      sCtx.fillStyle = "#39E900";
-      sCtx.font = "bold 38px sans-serif";
-      sCtx.fillText("High-Growth Web Engineering & Digital Systems", 1024, 800);
-
-      // Feature Metric Cards
+      // Feature Metric Cards at bottom
       const cards = [
         { label: "< 0.8s Load", sub: "Ultra-Fast Edge" },
-        { label: "Next.js 16", sub: "Turbopack Powered" },
+        { label: "High Growth", sub: "Engineered to Scale" },
         { label: "100% Vitals", sub: "Production Grade" },
       ];
 
       cards.forEach((c, idx) => {
         const cx = 564 + idx * 460;
-        const cy = 930;
+        const cy = 990;
         sCtx.fillStyle = "rgba(255, 255, 255, 0.05)";
         sCtx.beginPath();
-        sCtx.roundRect(cx - 200, cy - 60, 400, 120, 24);
+        sCtx.roundRect(cx - 200, cy - 50, 400, 100, 20);
         sCtx.fill();
         sCtx.strokeStyle = "rgba(57, 233, 0, 0.35)";
-        sCtx.lineWidth = 2;
+        sCtx.lineWidth = 1.5;
         sCtx.stroke();
 
         sCtx.fillStyle = "#39E900";
-        sCtx.font = "bold 40px sans-serif";
+        sCtx.font = "bold 34px sans-serif";
+        sCtx.textAlign = "center";
         sCtx.fillText(c.label, cx, cy - 5);
 
-        sCtx.fillStyle = "rgba(255, 255, 255, 0.65)";
-        sCtx.font = "24px sans-serif";
-        sCtx.fillText(c.sub, cx, cy + 35);
+        sCtx.fillStyle = "rgba(255, 255, 255, 0.7)";
+        sCtx.font = "20px sans-serif";
+        sCtx.fillText(c.sub, cx, cy + 30);
       });
 
       // Bottom Dock
-      sCtx.fillStyle = "rgba(10, 14, 11, 0.85)";
+      sCtx.fillStyle = "rgba(7, 16, 10, 0.88)";
       sCtx.beginPath();
-      sCtx.roundRect(724, 1190, 600, 110, 36);
+      sCtx.roundRect(724, 1220, 600, 95, 32);
       sCtx.fill();
-      sCtx.strokeStyle = "rgba(255, 255, 255, 0.15)";
-      sCtx.lineWidth = 2;
+      sCtx.strokeStyle = "rgba(255, 255, 255, 0.12)";
+      sCtx.lineWidth = 1.5;
       sCtx.stroke();
 
       const apps = ["#006B21", "#39E900", "#ffffff", "#22c55e", "#10b981"];
       apps.forEach((col, idx) => {
         sCtx.fillStyle = col;
         sCtx.beginPath();
-        sCtx.roundRect(794 + idx * 105, 1215, 60, 60, 18);
+        sCtx.roundRect(794 + idx * 105, 1240, 52, 52, 16);
         sCtx.fill();
       });
     }
@@ -577,6 +584,14 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
 
     const screenTexture = new THREE.CanvasTexture(screenCanvas);
     screenTexture.generateMipmaps = true;
+
+    // Load official GrowBroo light logo for retina screen
+    const scrImg = new window.Image();
+    scrImg.src = "/growbroo-logo-light.png";
+    scrImg.onload = () => {
+      renderScreen(scrImg);
+      screenTexture.needsUpdate = true;
+    };
 
     // Display Bezel with Rounded Top Corners (matching 2nd screenshot!)
     const bezelShape = createRoundedRectShape(baseWidth - 0.10, baseDepth - 0.10, cornerRadius - 0.03);
@@ -643,8 +658,8 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     // 11. Physics & Animation Setup
     // Opening angle: -106 degrees so front lip lifts UP and swings BACK toward hinge!
     const targetOpenAngle = -Math.PI * 0.59;
-    const baseAngleY = -0.25; // 3/4 isometric perspective yaw matching home page laptop
-    const baseAngleX = 0.12;  // 3/4 isometric perspective pitch
+    const baseAngleY = -0.40; // 3/4 isometric perspective matching home page hero laptop
+    const baseAngleX = 0.10;  // 3/4 isometric perspective pitch
     laptopGroup.rotation.y = baseAngleY;
     laptopGroup.rotation.x = baseAngleX;
 
@@ -703,9 +718,9 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
         // Negative rotation: front lip goes UP (+Y) and BACK (-Z)!
         lidGroup.rotation.x = ease * targetOpenAngle;
 
-        // Smoothly square up the laptop to face camera directly as it opens
-        laptopGroup.rotation.y = THREE.MathUtils.lerp(baseAngleY, 0, ease);
-        laptopGroup.rotation.x = THREE.MathUtils.lerp(baseAngleX, 0.02, ease);
+        // Preserve 3/4 perspective matching home page hero laptop
+        laptopGroup.rotation.y = THREE.MathUtils.lerp(baseAngleY, -0.34, ease);
+        laptopGroup.rotation.x = THREE.MathUtils.lerp(baseAngleX, 0.08, ease);
         laptopGroup.position.y = THREE.MathUtils.lerp(laptopGroup.position.y, 0, ease);
 
         // Dynamic screen emissive ramp up & glow
@@ -730,12 +745,12 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
         const zt = Math.min((performance.now() - zoomStartTime) / zoomDuration, 1);
         const zEase = Math.pow(zt, 2.2);
 
-        // Target: Center of Retina Display (facing viewer)
-        const targetCamPos = new THREE.Vector3(0, 1.25, -0.35);
+        // Target: Center of Retina Display in 3/4 perspective
+        const targetCamPos = new THREE.Vector3(Math.sin(-0.34) * 0.6, 1.22, -0.2);
         camera.position.lerpVectors(initialCamPos, targetCamPos, zEase);
 
         const initialLookAt = new THREE.Vector3(0, 0.65, 0);
-        const targetLookAt = new THREE.Vector3(0, 1.18, -1.0);
+        const targetLookAt = new THREE.Vector3(Math.sin(-0.34) * 0.3, 1.18, -0.85);
         camera.lookAt(new THREE.Vector3().lerpVectors(initialLookAt, targetLookAt, zEase));
 
         if (container) {
@@ -777,19 +792,14 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     >
       {/* Top Branding */}
       <div className="absolute top-0 left-0 right-0 p-4 sm:p-6 flex items-center justify-between pointer-events-none z-10">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#006B21] flex items-center justify-center text-white font-bold text-sm shadow-md shadow-[#006B21]/20">
-            GB
-          </div>
-          <div>
-            <span className="font-bold text-gray-900 tracking-tight block text-base sm:text-lg">
-              GrowBroo<span className="text-[#39E900]">.</span>
-            </span>
-            <span className="text-xs uppercase tracking-widest text-gray-700 block font-semibold">
-              Digital Studio
-            </span>
-          </div>
-        </div>
+        <Image
+          src="/growbroo-logo.png"
+          alt="GrowBroo - Scale Your Business Online"
+          width={180}
+          height={55}
+          className="h-8 sm:h-9 w-auto object-contain"
+          priority
+        />
       </div>
     </div>
   );

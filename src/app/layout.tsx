@@ -13,44 +13,45 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://verdantdigital.com"),
+  metadataBase: new URL("https://growbroo.com"),
   title: {
-    default: "Verdant Digital | High-Growth Web Engineering & Digital Studio",
-    template: "%s | Verdant Digital",
+    default: "GrowBroo | Scale Your Business Online - Web Engineering & Digital Studio",
+    template: "%s | GrowBroo",
   },
   description:
-    "We build thoughtful digital experiences, high-performance web applications, and scalable digital products that help modern businesses grow with confidence.",
+    "GrowBroo engineers high-performance web products, scalable digital systems, and bespoke digital experiences to scale your business online.",
   keywords: [
+    "GrowBroo",
+    "Scale Your Business Online",
     "Web Development",
     "UI UX Design",
     "Next.js Development",
     "Digital Agency",
     "Modern Web Architecture",
     "E-commerce",
-    "Tailwind CSS",
   ],
-  authors: [{ name: "Verdant Digital Studio" }],
-  creator: "Verdant Digital",
-  publisher: "Verdant Digital",
+  authors: [{ name: "GrowBroo Digital Studio" }],
+  creator: "GrowBroo",
+  publisher: "GrowBroo",
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
   openGraph: {
-    title: "Verdant Digital | Big Ideas. Built for Real Growth.",
+    title: "GrowBroo | Scale Your Business Online",
     description:
-      "Modern digital products, high-velocity frontend engineering, and conversion-focused design systems for ambitious ventures.",
-    url: "https://verdantdigital.com",
-    siteName: "Verdant Digital",
+      "Modern digital products, high-velocity frontend engineering, and conversion-focused systems for ambitious ventures.",
+    url: "https://growbroo.com",
+    siteName: "GrowBroo",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Verdant Digital | Big Ideas. Built for Real Growth.",
+    title: "GrowBroo | Scale Your Business Online",
     description:
-      "Modern digital products, high-velocity frontend engineering, and conversion-focused design systems for ambitious ventures.",
+      "Modern digital products, high-velocity frontend engineering, and conversion-focused systems for ambitious ventures.",
   },
   robots: {
     index: true,

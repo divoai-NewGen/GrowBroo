@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { MenuIcon, CloseIcon } from "./Icons";
 import ContactModal from "./ContactModal";
@@ -50,32 +51,16 @@ export default function Navbar() {
             {/* Brand Logo */}
             <Link
               href="/"
-              className="flex items-center gap-2.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#006B21] rounded-lg z-10"
+              className="flex items-center group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#006B21] rounded-lg z-10"
             >
-              <div className="w-10 h-10 rounded-2xl bg-[#006B21] flex items-center justify-center text-[#39E900] shadow-sm transition-transform duration-200 group-hover:scale-105">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M12 2L3 8V16L12 22L21 16V8L12 2Z"
-                    stroke="#39E900"
-                    strokeWidth="2.2"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M12 6L7 9.5V14.5L12 18L17 14.5V9.5L12 6Z"
-                    fill="#39E900"
-                    fillOpacity="0.3"
-                  />
-                  <circle cx="12" cy="12" r="2.5" fill="#39E900" />
-                </svg>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-black tracking-tight text-[#050505] leading-tight">
-                  Verdant<span className="text-[#006B21]">.</span>
-                </span>
-                <span className="text-[10px] uppercase tracking-widest font-bold text-[#4D5C52] -mt-0.5">
-                  Digital Agency
-                </span>
-              </div>
+              <Image
+                src="/growbroo-logo.png"
+                alt="GrowBroo - Scale Your Business Online"
+                width={175}
+                height={52}
+                className="h-8 sm:h-9 w-auto object-contain transition-transform duration-200 group-hover:scale-[1.03]"
+                priority
+              />
             </Link>
 
             {/* Desktop Navigation Links - Centered */}
