@@ -151,9 +151,9 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     });
 
     const trackpadMaterial = new THREE.MeshStandardMaterial({
-      color: 0xbac0c5, // Subtle frosted glass silver trackpad
-      metalness: 0.5,
-      roughness: 0.4,
+      color: 0xc8cdd2, // Matches Apple MacBook satin aluminum glass trackpad
+      metalness: 0.72,
+      roughness: 0.38,
     });
 
     // Helper: Rounded Rectangle Shape Generator
@@ -240,7 +240,7 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     wellMesh.position.set(0, totalBaseHeight + 0.001, -0.22);
     laptopGroup.add(wellMesh);
 
-    // Chiclet Key deck
+    // Chiclet Key deck (all keys unified in sleek Apple matte black)
     const keyRows = 5;
     const keyCols = 14;
     const keyGroup = new THREE.Group();
@@ -254,16 +254,7 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
         const kw = isSpacebar ? 1.08 : 0.165;
         const kd = 0.165;
         const kGeo = new THREE.BoxGeometry(kw, 0.016, kd);
-        const kMat = isSpacebar
-          ? new THREE.MeshStandardMaterial({
-              color: 0x223627,
-              emissive: 0x39e900,
-              emissiveIntensity: 0.25,
-              roughness: 0.4,
-            })
-          : keyCapMaterial;
-
-        const keyMesh = new THREE.Mesh(kGeo, kMat);
+        const keyMesh = new THREE.Mesh(kGeo, keyCapMaterial);
         keyMesh.position.set(
           isSpacebar ? c * 0.198 + 0.42 : c * 0.198,
           0,
@@ -274,10 +265,30 @@ export default function LaptopIntro({ onFinish }: LaptopIntroProps) {
     }
     laptopGroup.add(keyGroup);
 
-    // Glass Trackpad (centered in front half with hairline border)
-    const trackpadGeo = new THREE.BoxGeometry(1.08, 0.004, 0.60);
-    const trackpadMesh = new THREE.Mesh(trackpadGeo, trackpadMaterial);
-    trackpadMesh.position.set(0, totalBaseHeight + 0.002, 0.62);
+    // Apple Precision Glass Trackpad (rounded corners, subtle hairline perimeter gap)
+    const tpWidth = 1.12;
+    const tpDepth = 0.68;
+    const tpRadius = 0.035;
+
+    // Subtle recessed perimeter groove
+    const tpGrooveShape = createRoundedRectShape(
+      tpWidth + 0.012,
+      tpDepth + 0.012,
+      tpRadius + 0.006
+    );
+    const tpGrooveGeo = new THREE.ShapeGeometry(tpGrooveShape);
+    tpGrooveGeo.rotateX(-Math.PI / 2);
+    const tpGrooveMat = new THREE.MeshBasicMaterial({ color: 0x9da3a9 });
+    const tpGrooveMesh = new THREE.Mesh(tpGrooveGeo, tpGrooveMat);
+    tpGrooveMesh.position.set(0, totalBaseHeight + 0.001, 0.60);
+    laptopGroup.add(tpGrooveMesh);
+
+    // Trackpad Surface (rounded rect matching Apple anodized finish)
+    const tpShape = createRoundedRectShape(tpWidth, tpDepth, tpRadius);
+    const tpGeo = new THREE.ShapeGeometry(tpShape);
+    tpGeo.rotateX(-Math.PI / 2);
+    const trackpadMesh = new THREE.Mesh(tpGeo, trackpadMaterial);
+    trackpadMesh.position.set(0, totalBaseHeight + 0.0015, 0.60);
     laptopGroup.add(trackpadMesh);
 
     // 7. Hinge & Lid Assembly
